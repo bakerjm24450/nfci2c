@@ -729,10 +729,10 @@ static const char *__pyx_filename;
 static const char *__pyx_f[] = {
   "src/nfci2c.pyx",
   "stringsource",
-  ".eggs/Cython-0.27.3-py2.7-linux-armv7l.egg/Cython/Includes/cpython/array.pxd",
-  ".eggs/Cython-0.27.3-py2.7-linux-armv7l.egg/Cython/Includes/cpython/type.pxd",
-  ".eggs/Cython-0.27.3-py2.7-linux-armv7l.egg/Cython/Includes/cpython/bool.pxd",
-  ".eggs/Cython-0.27.3-py2.7-linux-armv7l.egg/Cython/Includes/cpython/complex.pxd",
+  ".eggs/Cython-0.27.3-py3.5-linux-armv7l.egg/Cython/Includes/cpython/array.pxd",
+  ".eggs/Cython-0.27.3-py3.5-linux-armv7l.egg/Cython/Includes/cpython/type.pxd",
+  ".eggs/Cython-0.27.3-py3.5-linux-armv7l.egg/Cython/Includes/cpython/bool.pxd",
+  ".eggs/Cython-0.27.3-py3.5-linux-armv7l.egg/Cython/Includes/cpython/complex.pxd",
 };
 
 /*--- Type declarations ---*/
@@ -860,6 +860,12 @@ static int __Pyx_ParseOptionalKeywords(PyObject *kwds, PyObject **argnames[],\
 /* RaiseArgTupleInvalid.proto */
 static void __Pyx_RaiseArgtupleInvalid(const char* func_name, int exact,
     Py_ssize_t num_min, Py_ssize_t num_max, Py_ssize_t num_found);
+
+/* ArgTypeTest.proto */
+#define __Pyx_ArgTypeTest(obj, type, none_allowed, name, exact)\
+    ((likely((Py_TYPE(obj) == type) | (none_allowed && (obj == Py_None)))) ? 1 :\
+        __Pyx__ArgTypeTest(obj, type, name, exact))
+static int __Pyx__ArgTypeTest(PyObject *obj, PyTypeObject *type, const char *name, int exact);
 
 /* PyObjectCall.proto */
 #if CYTHON_COMPILING_IN_CPYTHON
@@ -1391,7 +1397,7 @@ static PyObject *__pyx_n_s_cline_in_traceback;
 static PyObject *__pyx_n_s_connstring;
 static PyObject *__pyx_n_s_getTag;
 static PyObject *__pyx_n_s_getstate;
-static PyObject *__pyx_kp_s_i2c;
+static PyObject *__pyx_kp_b_i2c;
 static PyObject *__pyx_n_s_import;
 static PyObject *__pyx_n_s_isTagPresent;
 static PyObject *__pyx_n_s_main;
@@ -1440,7 +1446,7 @@ static PyObject *__pyx_tuple__12;
 /* "nfci2c.pyx":53
  * 
  * 
- *     def __cinit__(self, connstring):             # <<<<<<<<<<<<<<
+ *     def __cinit__(self, bytes connstring):             # <<<<<<<<<<<<<<
  *         """Initialize the NFC device as an initiator
  * 
  */
@@ -1478,7 +1484,7 @@ static int __pyx_pw_6nfci2c_6Nfci2c_1__cinit__(PyObject *__pyx_v_self, PyObject 
     } else {
       values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
     }
-    __pyx_v_connstring = values[0];
+    __pyx_v_connstring = ((PyObject*)values[0]);
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
@@ -1488,9 +1494,14 @@ static int __pyx_pw_6nfci2c_6Nfci2c_1__cinit__(PyObject *__pyx_v_self, PyObject 
   __Pyx_RefNannyFinishContext();
   return -1;
   __pyx_L4_argument_unpacking_done:;
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_connstring), (&PyBytes_Type), 1, "connstring", 1))) __PYX_ERR(0, 53, __pyx_L1_error)
   __pyx_r = __pyx_pf_6nfci2c_6Nfci2c___cinit__(((struct __pyx_obj_6nfci2c_Nfci2c *)__pyx_v_self), __pyx_v_connstring);
 
   /* function exit code */
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __pyx_r = -1;
+  __pyx_L0:;
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -1573,7 +1584,7 @@ static int __pyx_pf_6nfci2c_6Nfci2c___cinit__(struct __pyx_obj_6nfci2c_Nfci2c *_
  *             cs = connstring
  * 
  */
-  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_v_connstring); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 72, __pyx_L1_error)
+  __pyx_t_2 = (__pyx_v_connstring != Py_None) && (PyBytes_GET_SIZE(__pyx_v_connstring) != 0);
   if (__pyx_t_2) {
 
     /* "nfci2c.pyx":73
@@ -1583,7 +1594,11 @@ static int __pyx_pf_6nfci2c_6Nfci2c___cinit__(struct __pyx_obj_6nfci2c_Nfci2c *_
  * 
  *         # open the device
  */
-    __pyx_t_3 = __Pyx_PyObject_AsWritableString(__pyx_v_connstring); if (unlikely((!__pyx_t_3) && PyErr_Occurred())) __PYX_ERR(0, 73, __pyx_L1_error)
+    if (unlikely(__pyx_v_connstring == Py_None)) {
+      PyErr_SetString(PyExc_TypeError, "expected bytes, NoneType found");
+      __PYX_ERR(0, 73, __pyx_L1_error)
+    }
+    __pyx_t_3 = __Pyx_PyBytes_AsWritableString(__pyx_v_connstring); if (unlikely((!__pyx_t_3) && PyErr_Occurred())) __PYX_ERR(0, 73, __pyx_L1_error)
     __pyx_v_cs = __pyx_t_3;
 
     /* "nfci2c.pyx":72
@@ -1680,7 +1695,7 @@ static int __pyx_pf_6nfci2c_6Nfci2c___cinit__(struct __pyx_obj_6nfci2c_Nfci2c *_
   /* "nfci2c.pyx":53
  * 
  * 
- *     def __cinit__(self, connstring):             # <<<<<<<<<<<<<<
+ *     def __cinit__(self, bytes connstring):             # <<<<<<<<<<<<<<
  *         """Initialize the NFC device as an initiator
  * 
  */
@@ -2117,7 +2132,7 @@ static int __pyx_f_6nfci2c_6Nfci2c_isTagPresent(struct __pyx_obj_6nfci2c_Nfci2c 
  *                                  self.__device, NULL)
  *         return(not result)             # <<<<<<<<<<<<<<
  * 
- *     cdef _wakeup(self, connstring):
+ *     cdef _wakeup(self, bytes connstring):
  */
   __pyx_r = (!(__pyx_v_result != 0));
   goto __pyx_L0;
@@ -2183,7 +2198,7 @@ static PyObject *__pyx_pf_6nfci2c_6Nfci2c_6isTagPresent(struct __pyx_obj_6nfci2c
 /* "nfci2c.pyx":130
  *         return(not result)
  * 
- *     cdef _wakeup(self, connstring):             # <<<<<<<<<<<<<<
+ *     cdef _wakeup(self, bytes connstring):             # <<<<<<<<<<<<<<
  *         # Tries to wake up the NFC module by quick writing to it
  *         if connstring:
  */
@@ -2214,24 +2229,33 @@ static PyObject *__pyx_f_6nfci2c_6Nfci2c__wakeup(CYTHON_UNUSED struct __pyx_obj_
   __Pyx_RefNannySetupContext("_wakeup", 0);
 
   /* "nfci2c.pyx":132
- *     cdef _wakeup(self, connstring):
+ *     cdef _wakeup(self, bytes connstring):
  *         # Tries to wake up the NFC module by quick writing to it
  *         if connstring:             # <<<<<<<<<<<<<<
  *             # get port number using magic
- *             i2c_num = int(connstring.rsplit('i2c-', 1)[1])
+ *             i2c_num = int(bytes(connstring).rsplit(b'i2c-', 1)[1])
  */
-  __pyx_t_1 = __Pyx_PyObject_IsTrue(__pyx_v_connstring); if (unlikely(__pyx_t_1 < 0)) __PYX_ERR(0, 132, __pyx_L1_error)
+  __pyx_t_1 = (__pyx_v_connstring != Py_None) && (PyBytes_GET_SIZE(__pyx_v_connstring) != 0);
   if (__pyx_t_1) {
 
     /* "nfci2c.pyx":134
  *         if connstring:
  *             # get port number using magic
- *             i2c_num = int(connstring.rsplit('i2c-', 1)[1])             # <<<<<<<<<<<<<<
+ *             i2c_num = int(bytes(connstring).rsplit(b'i2c-', 1)[1])             # <<<<<<<<<<<<<<
  * 
  *             success = False
  */
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_connstring, __pyx_n_s_rsplit); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 134, __pyx_L1_error)
+    __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 134, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
+    __Pyx_INCREF(__pyx_v_connstring);
+    __Pyx_GIVEREF(__pyx_v_connstring);
+    PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_v_connstring);
+    __pyx_t_3 = __Pyx_PyObject_Call(((PyObject *)(&PyBytes_Type)), __pyx_t_2, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 134, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_rsplit); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 134, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_tuple__6, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 134, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -2245,7 +2269,7 @@ static PyObject *__pyx_f_6nfci2c_6Nfci2c__wakeup(CYTHON_UNUSED struct __pyx_obj_
     __pyx_t_3 = 0;
 
     /* "nfci2c.pyx":136
- *             i2c_num = int(connstring.rsplit('i2c-', 1)[1])
+ *             i2c_num = int(bytes(connstring).rsplit(b'i2c-', 1)[1])
  * 
  *             success = False             # <<<<<<<<<<<<<<
  *             error_count = 0
@@ -2573,18 +2597,18 @@ static PyObject *__pyx_f_6nfci2c_6Nfci2c__wakeup(CYTHON_UNUSED struct __pyx_obj_
     }
 
     /* "nfci2c.pyx":132
- *     cdef _wakeup(self, connstring):
+ *     cdef _wakeup(self, bytes connstring):
  *         # Tries to wake up the NFC module by quick writing to it
  *         if connstring:             # <<<<<<<<<<<<<<
  *             # get port number using magic
- *             i2c_num = int(connstring.rsplit('i2c-', 1)[1])
+ *             i2c_num = int(bytes(connstring).rsplit(b'i2c-', 1)[1])
  */
   }
 
   /* "nfci2c.pyx":130
  *         return(not result)
  * 
- *     cdef _wakeup(self, connstring):             # <<<<<<<<<<<<<<
+ *     cdef _wakeup(self, bytes connstring):             # <<<<<<<<<<<<<<
  *         # Tries to wake up the NFC module by quick writing to it
  *         if connstring:
  */
@@ -3504,7 +3528,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_connstring, __pyx_k_connstring, sizeof(__pyx_k_connstring), 0, 0, 1, 1},
   {&__pyx_n_s_getTag, __pyx_k_getTag, sizeof(__pyx_k_getTag), 0, 0, 1, 1},
   {&__pyx_n_s_getstate, __pyx_k_getstate, sizeof(__pyx_k_getstate), 0, 0, 1, 1},
-  {&__pyx_kp_s_i2c, __pyx_k_i2c, sizeof(__pyx_k_i2c), 0, 0, 1, 0},
+  {&__pyx_kp_b_i2c, __pyx_k_i2c, sizeof(__pyx_k_i2c), 0, 0, 0, 0},
   {&__pyx_n_s_import, __pyx_k_import, sizeof(__pyx_k_import), 0, 0, 1, 1},
   {&__pyx_n_s_isTagPresent, __pyx_k_isTagPresent, sizeof(__pyx_k_isTagPresent), 0, 0, 1, 1},
   {&__pyx_n_s_main, __pyx_k_main, sizeof(__pyx_k_main), 0, 0, 1, 1},
@@ -3597,11 +3621,11 @@ static int __Pyx_InitCachedConstants(void) {
   /* "nfci2c.pyx":134
  *         if connstring:
  *             # get port number using magic
- *             i2c_num = int(connstring.rsplit('i2c-', 1)[1])             # <<<<<<<<<<<<<<
+ *             i2c_num = int(bytes(connstring).rsplit(b'i2c-', 1)[1])             # <<<<<<<<<<<<<<
  * 
  *             success = False
  */
-  __pyx_tuple__6 = PyTuple_Pack(2, __pyx_kp_s_i2c, __pyx_int_1); if (unlikely(!__pyx_tuple__6)) __PYX_ERR(0, 134, __pyx_L1_error)
+  __pyx_tuple__6 = PyTuple_Pack(2, __pyx_kp_b_i2c, __pyx_int_1); if (unlikely(!__pyx_tuple__6)) __PYX_ERR(0, 134, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__6);
   __Pyx_GIVEREF(__pyx_tuple__6);
 
@@ -4093,6 +4117,27 @@ static void __Pyx_RaiseArgtupleInvalid(
                  "%.200s() takes %.8s %" CYTHON_FORMAT_SSIZE_T "d positional argument%.1s (%" CYTHON_FORMAT_SSIZE_T "d given)",
                  func_name, more_or_less, num_expected,
                  (num_expected == 1) ? "" : "s", num_found);
+}
+
+/* ArgTypeTest */
+static int __Pyx__ArgTypeTest(PyObject *obj, PyTypeObject *type, const char *name, int exact)
+{
+    if (unlikely(!type)) {
+        PyErr_SetString(PyExc_SystemError, "Missing type object");
+        return 0;
+    }
+    else if (exact) {
+        #if PY_MAJOR_VERSION == 2
+        if ((type == &PyBaseString_Type) && likely(__Pyx_PyBaseString_CheckExact(obj))) return 1;
+        #endif
+    }
+    else {
+        if (likely(__Pyx_TypeCheck(obj, type))) return 1;
+    }
+    PyErr_Format(PyExc_TypeError,
+        "Argument '%.200s' has incorrect type (expected %.200s, got %.200s)",
+        name, type->tp_name, Py_TYPE(obj)->tp_name);
+    return 0;
 }
 
 /* PyObjectCall */

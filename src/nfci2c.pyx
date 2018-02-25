@@ -50,7 +50,7 @@ cdef class Nfci2c:
     cdef cnfci2c.nfc_target __target
 
 
-    def __cinit__(self, connstring):
+    def __cinit__(self, bytes connstring):
         """Initialize the NFC device as an initiator
        
         Args:
@@ -127,11 +127,11 @@ cdef class Nfci2c:
                                  self.__device, NULL)
         return(not result)
 
-    cdef _wakeup(self, connstring):
+    cdef _wakeup(self, bytes connstring):
         # Tries to wake up the NFC module by quick writing to it
         if connstring:
             # get port number using magic
-            i2c_num = int(connstring.rsplit('i2c-', 1)[1])
+            i2c_num = int(bytes(connstring).rsplit(b'i2c-', 1)[1])
 
             success = False
             error_count = 0
