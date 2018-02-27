@@ -151,6 +151,6 @@ cdef class Nfci2c:
 
             # if we still haven't woken up, then something's wrong
             if error_count >= 5:
-                raise IOError("Cannot wake NFC device "), i2c_num
+                raise IOError("Cannot wake NFC device ")
 
 

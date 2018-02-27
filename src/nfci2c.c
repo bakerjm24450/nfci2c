@@ -729,10 +729,10 @@ static const char *__pyx_filename;
 static const char *__pyx_f[] = {
   "src/nfci2c.pyx",
   "stringsource",
-  ".eggs/Cython-0.27.3-py3.5-linux-armv7l.egg/Cython/Includes/cpython/array.pxd",
-  ".eggs/Cython-0.27.3-py3.5-linux-armv7l.egg/Cython/Includes/cpython/type.pxd",
-  ".eggs/Cython-0.27.3-py3.5-linux-armv7l.egg/Cython/Includes/cpython/bool.pxd",
-  ".eggs/Cython-0.27.3-py3.5-linux-armv7l.egg/Cython/Includes/cpython/complex.pxd",
+  ".eggs/Cython-0.27.3-py2.7-linux-armv7l.egg/Cython/Includes/cpython/array.pxd",
+  ".eggs/Cython-0.27.3-py2.7-linux-armv7l.egg/Cython/Includes/cpython/type.pxd",
+  ".eggs/Cython-0.27.3-py2.7-linux-armv7l.egg/Cython/Includes/cpython/bool.pxd",
+  ".eggs/Cython-0.27.3-py2.7-linux-armv7l.egg/Cython/Includes/cpython/complex.pxd",
 };
 
 /*--- Type declarations ---*/
@@ -2566,7 +2566,7 @@ static PyObject *__pyx_f_6nfci2c_6Nfci2c__wakeup(CYTHON_UNUSED struct __pyx_obj_
  * 
  *             # if we still haven't woken up, then something's wrong
  *             if error_count >= 5:             # <<<<<<<<<<<<<<
- *                 raise IOError("Cannot wake NFC device "), i2c_num
+ *                 raise IOError("Cannot wake NFC device ")
  * 
  */
     __pyx_t_5 = PyObject_RichCompare(__pyx_v_error_count, __pyx_int_5, Py_GE); __Pyx_XGOTREF(__pyx_t_5); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 153, __pyx_L1_error)
@@ -2577,13 +2577,13 @@ static PyObject *__pyx_f_6nfci2c_6Nfci2c__wakeup(CYTHON_UNUSED struct __pyx_obj_
       /* "nfci2c.pyx":154
  *             # if we still haven't woken up, then something's wrong
  *             if error_count >= 5:
- *                 raise IOError("Cannot wake NFC device "), i2c_num             # <<<<<<<<<<<<<<
+ *                 raise IOError("Cannot wake NFC device ")             # <<<<<<<<<<<<<<
  * 
  * 
  */
       __pyx_t_5 = __Pyx_PyObject_Call(__pyx_builtin_IOError, __pyx_tuple__10, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 154, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __Pyx_Raise(__pyx_t_5, __pyx_v_i2c_num, 0, 0);
+      __Pyx_Raise(__pyx_t_5, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       __PYX_ERR(0, 154, __pyx_L1_error)
 
@@ -2591,7 +2591,7 @@ static PyObject *__pyx_f_6nfci2c_6Nfci2c__wakeup(CYTHON_UNUSED struct __pyx_obj_
  * 
  *             # if we still haven't woken up, then something's wrong
  *             if error_count >= 5:             # <<<<<<<<<<<<<<
- *                 raise IOError("Cannot wake NFC device "), i2c_num
+ *                 raise IOError("Cannot wake NFC device ")
  * 
  */
     }
@@ -3657,7 +3657,7 @@ static int __Pyx_InitCachedConstants(void) {
   /* "nfci2c.pyx":154
  *             # if we still haven't woken up, then something's wrong
  *             if error_count >= 5:
- *                 raise IOError("Cannot wake NFC device "), i2c_num             # <<<<<<<<<<<<<<
+ *                 raise IOError("Cannot wake NFC device ")             # <<<<<<<<<<<<<<
  * 
  * 
  */
