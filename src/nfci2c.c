@@ -742,7 +742,7 @@ typedef struct arrayobject arrayobject;
 #endif
 struct __pyx_obj_6nfci2c_Nfci2c;
 
-/* "nfci2c.pyx":40
+/* "nfci2c.pyx":41
  * import time
  * 
  * cdef class Nfci2c:             # <<<<<<<<<<<<<<
@@ -755,6 +755,9 @@ struct __pyx_obj_6nfci2c_Nfci2c {
   nfc_context *__pyx___context;
   nfc_device *__pyx___device;
   nfc_target __pyx___target;
+  int __pyx___busAddr;
+  int __pyx___muxAddr;
+  int __pyx___muxChannel;
 };
 
 
@@ -762,7 +765,7 @@ struct __pyx_obj_6nfci2c_Nfci2c {
 struct __pyx_vtabstruct_6nfci2c_Nfci2c {
   PyObject *(*getTag)(struct __pyx_obj_6nfci2c_Nfci2c *, int __pyx_skip_dispatch);
   int (*isTagPresent)(struct __pyx_obj_6nfci2c_Nfci2c *, int __pyx_skip_dispatch);
-  PyObject *(*_wakeup)(struct __pyx_obj_6nfci2c_Nfci2c *, PyObject *);
+  PyObject *(*_wakeup)(struct __pyx_obj_6nfci2c_Nfci2c *);
 };
 static struct __pyx_vtabstruct_6nfci2c_Nfci2c *__pyx_vtabptr_6nfci2c_Nfci2c;
 
@@ -874,6 +877,61 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_Call(PyObject *func, PyObject *arg
 #define __Pyx_PyObject_Call(func, arg, kw) PyObject_Call(func, arg, kw)
 #endif
 
+/* GetItemInt.proto */
+#define __Pyx_GetItemInt(o, i, type, is_signed, to_py_func, is_list, wraparound, boundscheck)\
+    (__Pyx_fits_Py_ssize_t(i, type, is_signed) ?\
+    __Pyx_GetItemInt_Fast(o, (Py_ssize_t)i, is_list, wraparound, boundscheck) :\
+    (is_list ? (PyErr_SetString(PyExc_IndexError, "list index out of range"), (PyObject*)NULL) :\
+               __Pyx_GetItemInt_Generic(o, to_py_func(i))))
+#define __Pyx_GetItemInt_List(o, i, type, is_signed, to_py_func, is_list, wraparound, boundscheck)\
+    (__Pyx_fits_Py_ssize_t(i, type, is_signed) ?\
+    __Pyx_GetItemInt_List_Fast(o, (Py_ssize_t)i, wraparound, boundscheck) :\
+    (PyErr_SetString(PyExc_IndexError, "list index out of range"), (PyObject*)NULL))
+static CYTHON_INLINE PyObject *__Pyx_GetItemInt_List_Fast(PyObject *o, Py_ssize_t i,
+                                                              int wraparound, int boundscheck);
+#define __Pyx_GetItemInt_Tuple(o, i, type, is_signed, to_py_func, is_list, wraparound, boundscheck)\
+    (__Pyx_fits_Py_ssize_t(i, type, is_signed) ?\
+    __Pyx_GetItemInt_Tuple_Fast(o, (Py_ssize_t)i, wraparound, boundscheck) :\
+    (PyErr_SetString(PyExc_IndexError, "tuple index out of range"), (PyObject*)NULL))
+static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Tuple_Fast(PyObject *o, Py_ssize_t i,
+                                                              int wraparound, int boundscheck);
+static PyObject *__Pyx_GetItemInt_Generic(PyObject *o, PyObject* j);
+static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Fast(PyObject *o, Py_ssize_t i,
+                                                     int is_list, int wraparound, int boundscheck);
+
+/* PyCFunctionFastCall.proto */
+#if CYTHON_FAST_PYCCALL
+static CYTHON_INLINE PyObject *__Pyx_PyCFunction_FastCall(PyObject *func, PyObject **args, Py_ssize_t nargs);
+#else
+#define __Pyx_PyCFunction_FastCall(func, args, nargs)  (assert(0), NULL)
+#endif
+
+/* PyFunctionFastCall.proto */
+#if CYTHON_FAST_PYCALL
+#define __Pyx_PyFunction_FastCall(func, args, nargs)\
+    __Pyx_PyFunction_FastCallDict((func), (args), (nargs), NULL)
+#if 1 || PY_VERSION_HEX < 0x030600B1
+static PyObject *__Pyx_PyFunction_FastCallDict(PyObject *func, PyObject **args, int nargs, PyObject *kwargs);
+#else
+#define __Pyx_PyFunction_FastCallDict(func, args, nargs, kwargs) _PyFunction_FastCallDict(func, args, nargs, kwargs)
+#endif
+#endif
+
+/* PyObjectCallMethO.proto */
+#if CYTHON_COMPILING_IN_CPYTHON
+static CYTHON_INLINE PyObject* __Pyx_PyObject_CallMethO(PyObject *func, PyObject *arg);
+#endif
+
+/* PyObjectCallOneArg.proto */
+static CYTHON_INLINE PyObject* __Pyx_PyObject_CallOneArg(PyObject *func, PyObject *arg);
+
+/* PyObjectCallNoArg.proto */
+#if CYTHON_COMPILING_IN_CPYTHON
+static CYTHON_INLINE PyObject* __Pyx_PyObject_CallNoArg(PyObject *func);
+#else
+#define __Pyx_PyObject_CallNoArg(func) __Pyx_PyObject_Call(func, __pyx_empty_tuple, NULL)
+#endif
+
 /* PyThreadStateGet.proto */
 #if CYTHON_FAST_THREAD_STATE
 #define __Pyx_PyThreadState_declare  PyThreadState *__pyx_tstate;
@@ -913,38 +971,10 @@ static CYTHON_INLINE void __Pyx_ErrFetchInState(PyThreadState *tstate, PyObject 
 /* RaiseException.proto */
 static void __Pyx_Raise(PyObject *type, PyObject *value, PyObject *tb, PyObject *cause);
 
-/* PyCFunctionFastCall.proto */
-#if CYTHON_FAST_PYCCALL
-static CYTHON_INLINE PyObject *__Pyx_PyCFunction_FastCall(PyObject *func, PyObject **args, Py_ssize_t nargs);
-#else
-#define __Pyx_PyCFunction_FastCall(func, args, nargs)  (assert(0), NULL)
-#endif
-
-/* PyFunctionFastCall.proto */
-#if CYTHON_FAST_PYCALL
-#define __Pyx_PyFunction_FastCall(func, args, nargs)\
-    __Pyx_PyFunction_FastCallDict((func), (args), (nargs), NULL)
-#if 1 || PY_VERSION_HEX < 0x030600B1
-static PyObject *__Pyx_PyFunction_FastCallDict(PyObject *func, PyObject **args, int nargs, PyObject *kwargs);
-#else
-#define __Pyx_PyFunction_FastCallDict(func, args, nargs, kwargs) _PyFunction_FastCallDict(func, args, nargs, kwargs)
-#endif
-#endif
-
-/* PyObjectCallMethO.proto */
-#if CYTHON_COMPILING_IN_CPYTHON
-static CYTHON_INLINE PyObject* __Pyx_PyObject_CallMethO(PyObject *func, PyObject *arg);
-#endif
-
-/* PyObjectCallOneArg.proto */
-static CYTHON_INLINE PyObject* __Pyx_PyObject_CallOneArg(PyObject *func, PyObject *arg);
-
-/* PyObjectCallNoArg.proto */
-#if CYTHON_COMPILING_IN_CPYTHON
-static CYTHON_INLINE PyObject* __Pyx_PyObject_CallNoArg(PyObject *func);
-#else
-#define __Pyx_PyObject_CallNoArg(func) __Pyx_PyObject_Call(func, __pyx_empty_tuple, NULL)
-#endif
+/* WriteUnraisableException.proto */
+static void __Pyx_WriteUnraisable(const char *name, int clineno,
+                                  int lineno, const char *filename,
+                                  int full_traceback, int nogil);
 
 /* ListAppend.proto */
 #if CYTHON_USE_PYLIST_INTERNALS && CYTHON_ASSUME_SAFE_MACROS
@@ -969,33 +999,6 @@ static PyObject* __Pyx__PyObject_CallMethod1(PyObject* method, PyObject* arg);
 
 /* append.proto */
 static CYTHON_INLINE int __Pyx_PyObject_Append(PyObject* L, PyObject* x);
-
-/* WriteUnraisableException.proto */
-static void __Pyx_WriteUnraisable(const char *name, int clineno,
-                                  int lineno, const char *filename,
-                                  int full_traceback, int nogil);
-
-/* GetItemInt.proto */
-#define __Pyx_GetItemInt(o, i, type, is_signed, to_py_func, is_list, wraparound, boundscheck)\
-    (__Pyx_fits_Py_ssize_t(i, type, is_signed) ?\
-    __Pyx_GetItemInt_Fast(o, (Py_ssize_t)i, is_list, wraparound, boundscheck) :\
-    (is_list ? (PyErr_SetString(PyExc_IndexError, "list index out of range"), (PyObject*)NULL) :\
-               __Pyx_GetItemInt_Generic(o, to_py_func(i))))
-#define __Pyx_GetItemInt_List(o, i, type, is_signed, to_py_func, is_list, wraparound, boundscheck)\
-    (__Pyx_fits_Py_ssize_t(i, type, is_signed) ?\
-    __Pyx_GetItemInt_List_Fast(o, (Py_ssize_t)i, wraparound, boundscheck) :\
-    (PyErr_SetString(PyExc_IndexError, "list index out of range"), (PyObject*)NULL))
-static CYTHON_INLINE PyObject *__Pyx_GetItemInt_List_Fast(PyObject *o, Py_ssize_t i,
-                                                              int wraparound, int boundscheck);
-#define __Pyx_GetItemInt_Tuple(o, i, type, is_signed, to_py_func, is_list, wraparound, boundscheck)\
-    (__Pyx_fits_Py_ssize_t(i, type, is_signed) ?\
-    __Pyx_GetItemInt_Tuple_Fast(o, (Py_ssize_t)i, wraparound, boundscheck) :\
-    (PyErr_SetString(PyExc_IndexError, "tuple index out of range"), (PyObject*)NULL))
-static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Tuple_Fast(PyObject *o, Py_ssize_t i,
-                                                              int wraparound, int boundscheck);
-static PyObject *__Pyx_GetItemInt_Generic(PyObject *o, PyObject* j);
-static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Fast(PyObject *o, Py_ssize_t i,
-                                                     int is_list, int wraparound, int boundscheck);
 
 /* GetModuleGlobalName.proto */
 static CYTHON_INLINE PyObject *__Pyx_GetModuleGlobalName(PyObject *name);
@@ -1194,19 +1197,22 @@ static CYTHON_INLINE int resize_smart(arrayobject *self, Py_ssize_t n) {
 #endif
 
 /* CIntToPy.proto */
+static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value);
+
+/* CIntToPy.proto */
 static CYTHON_INLINE PyObject* __Pyx_PyInt_From_uint8_t(uint8_t value);
 
 /* CIntToPy.proto */
-static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value);
+static CYTHON_INLINE PyObject* __Pyx_PyInt_From_int(int value);
+
+/* CIntFromPy.proto */
+static CYTHON_INLINE int __Pyx_PyInt_As_int(PyObject *);
 
 /* CIntFromPy.proto */
 static CYTHON_INLINE size_t __Pyx_PyInt_As_size_t(PyObject *);
 
 /* CIntFromPy.proto */
 static CYTHON_INLINE long __Pyx_PyInt_As_long(PyObject *);
-
-/* CIntFromPy.proto */
-static CYTHON_INLINE int __Pyx_PyInt_As_int(PyObject *);
 
 /* FastTypeChecks.proto */
 #if CYTHON_COMPILING_IN_CPYTHON
@@ -1243,7 +1249,7 @@ static int __Pyx_InitStrings(__Pyx_StringTabEntry *t);
 
 static PyObject *__pyx_f_6nfci2c_6Nfci2c_getTag(struct __pyx_obj_6nfci2c_Nfci2c *__pyx_v_self, int __pyx_skip_dispatch); /* proto*/
 static int __pyx_f_6nfci2c_6Nfci2c_isTagPresent(struct __pyx_obj_6nfci2c_Nfci2c *__pyx_v_self, int __pyx_skip_dispatch); /* proto*/
-static PyObject *__pyx_f_6nfci2c_6Nfci2c__wakeup(CYTHON_UNUSED struct __pyx_obj_6nfci2c_Nfci2c *__pyx_v_self, PyObject *__pyx_v_connstring); /* proto*/
+static PyObject *__pyx_f_6nfci2c_6Nfci2c__wakeup(struct __pyx_obj_6nfci2c_Nfci2c *__pyx_v_self); /* proto*/
 
 /* Module declarations from 'src.cnfci2c' */
 
@@ -1355,6 +1361,7 @@ static const char __pyx_k_test[] = "__test__";
 static const char __pyx_k_time[] = "time";
 static const char __pyx_k_SMBus[] = "SMBus";
 static const char __pyx_k_array[] = "array";
+static const char __pyx_k_close[] = "close";
 static const char __pyx_k_range[] = "range";
 static const char __pyx_k_sleep[] = "sleep";
 static const char __pyx_k_smbus[] = "smbus";
@@ -1364,22 +1371,26 @@ static const char __pyx_k_import[] = "__import__";
 static const char __pyx_k_reduce[] = "__reduce__";
 static const char __pyx_k_rsplit[] = "rsplit";
 static const char __pyx_k_IOError[] = "IOError";
+static const char __pyx_k_muxAddr[] = "muxAddr";
 static const char __pyx_k_getstate[] = "__getstate__";
 static const char __pyx_k_setstate[] = "__setstate__";
 static const char __pyx_k_TypeError[] = "TypeError";
 static const char __pyx_k_reduce_ex[] = "__reduce_ex__";
 static const char __pyx_k_connstring[] = "connstring";
+static const char __pyx_k_muxChannel[] = "muxChannel";
 static const char __pyx_k_pyx_vtable[] = "__pyx_vtable__";
+static const char __pyx_k_write_byte[] = "write_byte";
 static const char __pyx_k_MemoryError[] = "MemoryError";
 static const char __pyx_k_write_quick[] = "write_quick";
 static const char __pyx_k_isTagPresent[] = "isTagPresent";
 static const char __pyx_k_reduce_cython[] = "__reduce_cython__";
+static const char __pyx_k_selectChannel[] = "_selectChannel";
 static const char __pyx_k_setstate_cython[] = "__setstate_cython__";
 static const char __pyx_k_cline_in_traceback[] = "cline_in_traceback";
 static const char __pyx_k_Error_reading_NFC_tag[] = "Error reading NFC tag";
 static const char __pyx_k_Cannot_wake_NFC_device[] = "Cannot wake NFC device ";
 static const char __pyx_k_Unable_to_open_NFC_device[] = "Unable to open NFC device";
-static const char __pyx_k_Communicate_with_NFC_devices_usi[] = "Communicate with NFC devices using libnfc on the I2C bus.\n\nThis class does not implement the full libnfc library; I\nonly included the functions that I needed.\n\nExample:\n    The following will open the device, wait for a tag,\n    and then wait until the tag is removed.\n\n    # open the nfc device\n    reader = Nfci2c('pn532_i2c:/dev/i2c-1')\n\n    # read a tag\n    tag = reader.getTag()\n    while tag is None:\n        tag = reader.getTag()\n\n    print('Found tag: '), tag\n\n    # wait until tag is removed\n    while reader.isTagPresent():\n        pass\n    print('Tag was removed')\n\nNotes:\n    This was built using Cython\n\nAuthor:\n    Mac Baker (bakerjm24450.dev@gmail.com)\n";
+static const char __pyx_k_Communicate_with_NFC_devices_usi[] = "Communicate with NFC devices using libnfc on the I2C bus.\n\nThis class does not implement the full libnfc library; I\nonly included the functions that I needed.\n\nExample:\n    The following will open the device, wait for a tag,\n    and then wait until the tag is removed.\n\n    # open the nfc device\n    reader = Nfci2c(connstring=b'pn532_i2c:/dev/i2c-1', \n                     muxAddr=0x70, muxChannel=0)\n\n    # read a tag\n    tag = reader.getTag()\n    while tag is None:\n        tag = reader.getTag()\n\n    print('Found tag: '), tag\n\n    # wait until tag is removed\n    while reader.isTagPresent():\n        pass\n    print('Tag was removed')\n\nNotes:\n    This was built using Cython\n\nAuthor:\n    Mac Baker (bakerjm24450.dev@gmail.com)\n";
 static const char __pyx_k_Unable_to_initialize_NFC_library[] = "Unable to initialize NFC library";
 static const char __pyx_k_no_default___reduce___due_to_non[] = "no default __reduce__ due to non-trivial __cinit__";
 static PyObject *__pyx_n_s_B;
@@ -1394,6 +1405,7 @@ static PyObject *__pyx_kp_s_Unable_to_open_NFC_device;
 static PyObject *__pyx_n_s_append;
 static PyObject *__pyx_n_s_array;
 static PyObject *__pyx_n_s_cline_in_traceback;
+static PyObject *__pyx_n_s_close;
 static PyObject *__pyx_n_s_connstring;
 static PyObject *__pyx_n_s_getTag;
 static PyObject *__pyx_n_s_getstate;
@@ -1401,6 +1413,8 @@ static PyObject *__pyx_kp_b_i2c;
 static PyObject *__pyx_n_s_import;
 static PyObject *__pyx_n_s_isTagPresent;
 static PyObject *__pyx_n_s_main;
+static PyObject *__pyx_n_s_muxAddr;
+static PyObject *__pyx_n_s_muxChannel;
 static PyObject *__pyx_n_s_name;
 static PyObject *__pyx_kp_s_no_default___reduce___due_to_non;
 static PyObject *__pyx_n_s_pyx_vtable;
@@ -1409,19 +1423,22 @@ static PyObject *__pyx_n_s_reduce;
 static PyObject *__pyx_n_s_reduce_cython;
 static PyObject *__pyx_n_s_reduce_ex;
 static PyObject *__pyx_n_s_rsplit;
+static PyObject *__pyx_n_s_selectChannel;
 static PyObject *__pyx_n_s_setstate;
 static PyObject *__pyx_n_s_setstate_cython;
 static PyObject *__pyx_n_s_sleep;
 static PyObject *__pyx_n_s_smbus;
 static PyObject *__pyx_n_s_test;
 static PyObject *__pyx_n_s_time;
+static PyObject *__pyx_n_s_write_byte;
 static PyObject *__pyx_n_s_write_quick;
-static int __pyx_pf_6nfci2c_6Nfci2c___cinit__(struct __pyx_obj_6nfci2c_Nfci2c *__pyx_v_self, PyObject *__pyx_v_connstring); /* proto */
+static int __pyx_pf_6nfci2c_6Nfci2c___cinit__(struct __pyx_obj_6nfci2c_Nfci2c *__pyx_v_self, PyObject *__pyx_v_connstring, int __pyx_v_muxAddr, int __pyx_v_muxChannel); /* proto */
 static void __pyx_pf_6nfci2c_6Nfci2c_2__dealloc__(struct __pyx_obj_6nfci2c_Nfci2c *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_6nfci2c_6Nfci2c_4getTag(struct __pyx_obj_6nfci2c_Nfci2c *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_6nfci2c_6Nfci2c_6isTagPresent(struct __pyx_obj_6nfci2c_Nfci2c *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_6nfci2c_6Nfci2c_8__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_6nfci2c_Nfci2c *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_6nfci2c_6Nfci2c_10__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_6nfci2c_Nfci2c *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state); /* proto */
+static PyObject *__pyx_pf_6nfci2c_6Nfci2c_8_selectChannel(struct __pyx_obj_6nfci2c_Nfci2c *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_6nfci2c_6Nfci2c_10__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_6nfci2c_Nfci2c *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_6nfci2c_6Nfci2c_12__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_6nfci2c_Nfci2c *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state); /* proto */
 static int __pyx_pf_7cpython_5array_5array___getbuffer__(arrayobject *__pyx_v_self, Py_buffer *__pyx_v_info, CYTHON_UNUSED int __pyx_v_flags); /* proto */
 static void __pyx_pf_7cpython_5array_5array_2__releasebuffer__(CYTHON_UNUSED arrayobject *__pyx_v_self, Py_buffer *__pyx_v_info); /* proto */
 static PyObject *__pyx_tp_new_6nfci2c_Nfci2c(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
@@ -1443,28 +1460,35 @@ static PyObject *__pyx_tuple__10;
 static PyObject *__pyx_tuple__11;
 static PyObject *__pyx_tuple__12;
 
-/* "nfci2c.pyx":53
+/* "nfci2c.pyx":61
  * 
  * 
- *     def __cinit__(self, bytes connstring):             # <<<<<<<<<<<<<<
+ *     def __cinit__(self, bytes connstring=None,             # <<<<<<<<<<<<<<
+ *                      int muxAddr=0x70, int muxChannel=-1):
  *         """Initialize the NFC device as an initiator
- * 
  */
 
 /* Python wrapper */
 static int __pyx_pw_6nfci2c_6Nfci2c_1__cinit__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
 static int __pyx_pw_6nfci2c_6Nfci2c_1__cinit__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_connstring = 0;
+  int __pyx_v_muxAddr;
+  int __pyx_v_muxChannel;
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__cinit__ (wrapper)", 0);
   {
-    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_connstring,0};
-    PyObject* values[1] = {0};
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_connstring,&__pyx_n_s_muxAddr,&__pyx_n_s_muxChannel,0};
+    PyObject* values[3] = {0,0,0};
+    values[0] = ((PyObject*)Py_None);
     if (unlikely(__pyx_kwds)) {
       Py_ssize_t kw_args;
       const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
       switch (pos_args) {
+        case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+        CYTHON_FALLTHROUGH;
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        CYTHON_FALLTHROUGH;
         case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
         CYTHON_FALLTHROUGH;
         case  0: break;
@@ -1473,29 +1497,60 @@ static int __pyx_pw_6nfci2c_6Nfci2c_1__cinit__(PyObject *__pyx_v_self, PyObject 
       kw_args = PyDict_Size(__pyx_kwds);
       switch (pos_args) {
         case  0:
-        if (likely((values[0] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_connstring)) != 0)) kw_args--;
-        else goto __pyx_L5_argtuple_error;
+        if (kw_args > 0) {
+          PyObject* value = PyDict_GetItem(__pyx_kwds, __pyx_n_s_connstring);
+          if (value) { values[0] = value; kw_args--; }
+        }
+        CYTHON_FALLTHROUGH;
+        case  1:
+        if (kw_args > 0) {
+          PyObject* value = PyDict_GetItem(__pyx_kwds, __pyx_n_s_muxAddr);
+          if (value) { values[1] = value; kw_args--; }
+        }
+        CYTHON_FALLTHROUGH;
+        case  2:
+        if (kw_args > 0) {
+          PyObject* value = PyDict_GetItem(__pyx_kwds, __pyx_n_s_muxChannel);
+          if (value) { values[2] = value; kw_args--; }
+        }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__cinit__") < 0)) __PYX_ERR(0, 53, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__cinit__") < 0)) __PYX_ERR(0, 61, __pyx_L3_error)
       }
-    } else if (PyTuple_GET_SIZE(__pyx_args) != 1) {
-      goto __pyx_L5_argtuple_error;
     } else {
-      values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+      switch (PyTuple_GET_SIZE(__pyx_args)) {
+        case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+        CYTHON_FALLTHROUGH;
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        CYTHON_FALLTHROUGH;
+        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        CYTHON_FALLTHROUGH;
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
     }
     __pyx_v_connstring = ((PyObject*)values[0]);
+    if (values[1]) {
+      __pyx_v_muxAddr = __Pyx_PyInt_As_int(values[1]); if (unlikely((__pyx_v_muxAddr == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 62, __pyx_L3_error)
+    } else {
+      __pyx_v_muxAddr = ((int)0x70);
+    }
+    if (values[2]) {
+      __pyx_v_muxChannel = __Pyx_PyInt_As_int(values[2]); if (unlikely((__pyx_v_muxChannel == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 62, __pyx_L3_error)
+    } else {
+      __pyx_v_muxChannel = ((int)-1);
+    }
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 1, 1, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 53, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("__cinit__", 0, 0, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 61, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("nfci2c.Nfci2c.__cinit__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return -1;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_connstring), (&PyBytes_Type), 1, "connstring", 1))) __PYX_ERR(0, 53, __pyx_L1_error)
-  __pyx_r = __pyx_pf_6nfci2c_6Nfci2c___cinit__(((struct __pyx_obj_6nfci2c_Nfci2c *)__pyx_v_self), __pyx_v_connstring);
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_connstring), (&PyBytes_Type), 1, "connstring", 1))) __PYX_ERR(0, 61, __pyx_L1_error)
+  __pyx_r = __pyx_pf_6nfci2c_6Nfci2c___cinit__(((struct __pyx_obj_6nfci2c_Nfci2c *)__pyx_v_self), __pyx_v_connstring, __pyx_v_muxAddr, __pyx_v_muxChannel);
 
   /* function exit code */
   goto __pyx_L0;
@@ -1506,28 +1561,137 @@ static int __pyx_pw_6nfci2c_6Nfci2c_1__cinit__(PyObject *__pyx_v_self, PyObject 
   return __pyx_r;
 }
 
-static int __pyx_pf_6nfci2c_6Nfci2c___cinit__(struct __pyx_obj_6nfci2c_Nfci2c *__pyx_v_self, PyObject *__pyx_v_connstring) {
+static int __pyx_pf_6nfci2c_6Nfci2c___cinit__(struct __pyx_obj_6nfci2c_Nfci2c *__pyx_v_self, PyObject *__pyx_v_connstring, int __pyx_v_muxAddr, int __pyx_v_muxChannel) {
   char *__pyx_v_cs;
   int __pyx_v_result;
   int __pyx_r;
   __Pyx_RefNannyDeclarations
-  PyObject *__pyx_t_1 = NULL;
-  int __pyx_t_2;
-  char *__pyx_t_3;
+  int __pyx_t_1;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  int __pyx_t_4;
+  PyObject *__pyx_t_5 = NULL;
+  char *__pyx_t_6;
   __Pyx_RefNannySetupContext("__cinit__", 0);
 
-  /* "nfci2c.pyx":63
- *         """
+  /* "nfci2c.pyx":76
+ * 
+ *         # get the SMBus addr of the I2C bus from the connstring
+ *         self.__busAddr = 1     # assume 1 unless connstring says otherwise             # <<<<<<<<<<<<<<
+ *         if connstring:
+ *             # get port number using magic
+ */
+  __pyx_v_self->__pyx___busAddr = 1;
+
+  /* "nfci2c.pyx":77
+ *         # get the SMBus addr of the I2C bus from the connstring
+ *         self.__busAddr = 1     # assume 1 unless connstring says otherwise
+ *         if connstring:             # <<<<<<<<<<<<<<
+ *             # get port number using magic
+ *             self.__busAddr = int(bytes(connstring).rsplit(b'i2c-', 1)[1])
+ */
+  __pyx_t_1 = (__pyx_v_connstring != Py_None) && (PyBytes_GET_SIZE(__pyx_v_connstring) != 0);
+  if (__pyx_t_1) {
+
+    /* "nfci2c.pyx":79
+ *         if connstring:
+ *             # get port number using magic
+ *             self.__busAddr = int(bytes(connstring).rsplit(b'i2c-', 1)[1])             # <<<<<<<<<<<<<<
+ * 
+ *         # get the I2C mux parameters
+ */
+    __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 79, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __Pyx_INCREF(__pyx_v_connstring);
+    __Pyx_GIVEREF(__pyx_v_connstring);
+    PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_v_connstring);
+    __pyx_t_3 = __Pyx_PyObject_Call(((PyObject *)(&PyBytes_Type)), __pyx_t_2, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 79, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_rsplit); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 79, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_tuple_, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 79, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __pyx_t_2 = __Pyx_GetItemInt(__pyx_t_3, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 79, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __pyx_t_3 = __Pyx_PyNumber_Int(__pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 79, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __pyx_t_4 = __Pyx_PyInt_As_int(__pyx_t_3); if (unlikely((__pyx_t_4 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 79, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __pyx_v_self->__pyx___busAddr = __pyx_t_4;
+
+    /* "nfci2c.pyx":77
+ *         # get the SMBus addr of the I2C bus from the connstring
+ *         self.__busAddr = 1     # assume 1 unless connstring says otherwise
+ *         if connstring:             # <<<<<<<<<<<<<<
+ *             # get port number using magic
+ *             self.__busAddr = int(bytes(connstring).rsplit(b'i2c-', 1)[1])
+ */
+  }
+
+  /* "nfci2c.pyx":82
+ * 
+ *         # get the I2C mux parameters
+ *         self.__muxAddr = muxAddr             # <<<<<<<<<<<<<<
+ *         self.__muxChannel = muxChannel & 0x7
+ * 
+ */
+  __pyx_v_self->__pyx___muxAddr = __pyx_v_muxAddr;
+
+  /* "nfci2c.pyx":83
+ *         # get the I2C mux parameters
+ *         self.__muxAddr = muxAddr
+ *         self.__muxChannel = muxChannel & 0x7             # <<<<<<<<<<<<<<
+ * 
+ *         # set the I2C mux if using
+ */
+  __pyx_v_self->__pyx___muxChannel = (__pyx_v_muxChannel & 0x7);
+
+  /* "nfci2c.pyx":86
+ * 
+ *         # set the I2C mux if using
+ *         self._selectChannel()             # <<<<<<<<<<<<<<
+ * 
  *         # wake up the NFC chip
- *         self._wakeup(connstring)             # <<<<<<<<<<<<<<
+ */
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_selectChannel); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 86, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_5 = NULL;
+  if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
+    __pyx_t_5 = PyMethod_GET_SELF(__pyx_t_2);
+    if (likely(__pyx_t_5)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+      __Pyx_INCREF(__pyx_t_5);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_2, function);
+    }
+  }
+  if (__pyx_t_5) {
+    __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_5); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 86, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+  } else {
+    __pyx_t_3 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 86, __pyx_L1_error)
+  }
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+
+  /* "nfci2c.pyx":89
+ * 
+ *         # wake up the NFC chip
+ *         self._wakeup()             # <<<<<<<<<<<<<<
  * 
  *         # init the library
  */
-  __pyx_t_1 = ((struct __pyx_vtabstruct_6nfci2c_Nfci2c *)__pyx_v_self->__pyx_vtab)->_wakeup(__pyx_v_self, __pyx_v_connstring); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 63, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_t_3 = ((struct __pyx_vtabstruct_6nfci2c_Nfci2c *)__pyx_v_self->__pyx_vtab)->_wakeup(__pyx_v_self); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 89, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "nfci2c.pyx":66
+  /* "nfci2c.pyx":92
  * 
  *         # init the library
  *         cnfci2c.nfc_init(&self.__context)             # <<<<<<<<<<<<<<
@@ -1536,30 +1700,30 @@ static int __pyx_pf_6nfci2c_6Nfci2c___cinit__(struct __pyx_obj_6nfci2c_Nfci2c *_
  */
   nfc_init((&__pyx_v_self->__pyx___context));
 
-  /* "nfci2c.pyx":67
+  /* "nfci2c.pyx":93
  *         # init the library
  *         cnfci2c.nfc_init(&self.__context)
  *         if self.__context is NULL:             # <<<<<<<<<<<<<<
  *             raise MemoryError("Unable to initialize NFC library")
  * 
  */
-  __pyx_t_2 = ((__pyx_v_self->__pyx___context == NULL) != 0);
-  if (__pyx_t_2) {
+  __pyx_t_1 = ((__pyx_v_self->__pyx___context == NULL) != 0);
+  if (__pyx_t_1) {
 
-    /* "nfci2c.pyx":68
+    /* "nfci2c.pyx":94
  *         cnfci2c.nfc_init(&self.__context)
  *         if self.__context is NULL:
  *             raise MemoryError("Unable to initialize NFC library")             # <<<<<<<<<<<<<<
  * 
  *         # do we have a connection string?
  */
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_MemoryError, __pyx_tuple_, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 68, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_1);
-    __Pyx_Raise(__pyx_t_1, 0, 0, 0);
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __PYX_ERR(0, 68, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_MemoryError, __pyx_tuple__2, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 94, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __Pyx_Raise(__pyx_t_3, 0, 0, 0);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __PYX_ERR(0, 94, __pyx_L1_error)
 
-    /* "nfci2c.pyx":67
+    /* "nfci2c.pyx":93
  *         # init the library
  *         cnfci2c.nfc_init(&self.__context)
  *         if self.__context is NULL:             # <<<<<<<<<<<<<<
@@ -1568,7 +1732,7 @@ static int __pyx_pf_6nfci2c_6Nfci2c___cinit__(struct __pyx_obj_6nfci2c_Nfci2c *_
  */
   }
 
-  /* "nfci2c.pyx":71
+  /* "nfci2c.pyx":97
  * 
  *         # do we have a connection string?
  *         cdef char* cs = NULL             # <<<<<<<<<<<<<<
@@ -1577,17 +1741,17 @@ static int __pyx_pf_6nfci2c_6Nfci2c___cinit__(struct __pyx_obj_6nfci2c_Nfci2c *_
  */
   __pyx_v_cs = NULL;
 
-  /* "nfci2c.pyx":72
+  /* "nfci2c.pyx":98
  *         # do we have a connection string?
  *         cdef char* cs = NULL
  *         if connstring:             # <<<<<<<<<<<<<<
  *             cs = connstring
  * 
  */
-  __pyx_t_2 = (__pyx_v_connstring != Py_None) && (PyBytes_GET_SIZE(__pyx_v_connstring) != 0);
-  if (__pyx_t_2) {
+  __pyx_t_1 = (__pyx_v_connstring != Py_None) && (PyBytes_GET_SIZE(__pyx_v_connstring) != 0);
+  if (__pyx_t_1) {
 
-    /* "nfci2c.pyx":73
+    /* "nfci2c.pyx":99
  *         cdef char* cs = NULL
  *         if connstring:
  *             cs = connstring             # <<<<<<<<<<<<<<
@@ -1596,12 +1760,12 @@ static int __pyx_pf_6nfci2c_6Nfci2c___cinit__(struct __pyx_obj_6nfci2c_Nfci2c *_
  */
     if (unlikely(__pyx_v_connstring == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "expected bytes, NoneType found");
-      __PYX_ERR(0, 73, __pyx_L1_error)
+      __PYX_ERR(0, 99, __pyx_L1_error)
     }
-    __pyx_t_3 = __Pyx_PyBytes_AsWritableString(__pyx_v_connstring); if (unlikely((!__pyx_t_3) && PyErr_Occurred())) __PYX_ERR(0, 73, __pyx_L1_error)
-    __pyx_v_cs = __pyx_t_3;
+    __pyx_t_6 = __Pyx_PyBytes_AsWritableString(__pyx_v_connstring); if (unlikely((!__pyx_t_6) && PyErr_Occurred())) __PYX_ERR(0, 99, __pyx_L1_error)
+    __pyx_v_cs = __pyx_t_6;
 
-    /* "nfci2c.pyx":72
+    /* "nfci2c.pyx":98
  *         # do we have a connection string?
  *         cdef char* cs = NULL
  *         if connstring:             # <<<<<<<<<<<<<<
@@ -1610,7 +1774,7 @@ static int __pyx_pf_6nfci2c_6Nfci2c___cinit__(struct __pyx_obj_6nfci2c_Nfci2c *_
  */
   }
 
-  /* "nfci2c.pyx":76
+  /* "nfci2c.pyx":102
  * 
  *         # open the device
  *         self.__device = cnfci2c.nfc_open(self.__context, cs)             # <<<<<<<<<<<<<<
@@ -1619,30 +1783,30 @@ static int __pyx_pf_6nfci2c_6Nfci2c___cinit__(struct __pyx_obj_6nfci2c_Nfci2c *_
  */
   __pyx_v_self->__pyx___device = nfc_open(__pyx_v_self->__pyx___context, __pyx_v_cs);
 
-  /* "nfci2c.pyx":77
+  /* "nfci2c.pyx":103
  *         # open the device
  *         self.__device = cnfci2c.nfc_open(self.__context, cs)
  *         if self.__device is NULL:             # <<<<<<<<<<<<<<
  *             # cnfci2c.nfc_exit(self.__context)
  *             raise IOError("Unable to open NFC device")
  */
-  __pyx_t_2 = ((__pyx_v_self->__pyx___device == NULL) != 0);
-  if (__pyx_t_2) {
+  __pyx_t_1 = ((__pyx_v_self->__pyx___device == NULL) != 0);
+  if (__pyx_t_1) {
 
-    /* "nfci2c.pyx":79
+    /* "nfci2c.pyx":105
  *         if self.__device is NULL:
  *             # cnfci2c.nfc_exit(self.__context)
  *             raise IOError("Unable to open NFC device")             # <<<<<<<<<<<<<<
  * 
  *         # set as NFC initiator
  */
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_IOError, __pyx_tuple__2, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 79, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_1);
-    __Pyx_Raise(__pyx_t_1, 0, 0, 0);
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __PYX_ERR(0, 79, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_IOError, __pyx_tuple__3, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 105, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __Pyx_Raise(__pyx_t_3, 0, 0, 0);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __PYX_ERR(0, 105, __pyx_L1_error)
 
-    /* "nfci2c.pyx":77
+    /* "nfci2c.pyx":103
  *         # open the device
  *         self.__device = cnfci2c.nfc_open(self.__context, cs)
  *         if self.__device is NULL:             # <<<<<<<<<<<<<<
@@ -1651,7 +1815,7 @@ static int __pyx_pf_6nfci2c_6Nfci2c___cinit__(struct __pyx_obj_6nfci2c_Nfci2c *_
  */
   }
 
-  /* "nfci2c.pyx":82
+  /* "nfci2c.pyx":108
  * 
  *         # set as NFC initiator
  *         cdef int result = cnfci2c.nfc_initiator_init(self.__device)             # <<<<<<<<<<<<<<
@@ -1660,30 +1824,30 @@ static int __pyx_pf_6nfci2c_6Nfci2c___cinit__(struct __pyx_obj_6nfci2c_Nfci2c *_
  */
   __pyx_v_result = nfc_initiator_init(__pyx_v_self->__pyx___device);
 
-  /* "nfci2c.pyx":83
+  /* "nfci2c.pyx":109
  *         # set as NFC initiator
  *         cdef int result = cnfci2c.nfc_initiator_init(self.__device)
  *         if result < 0:             # <<<<<<<<<<<<<<
  *             # cnfci2c.nfc_close(self.__device)
  *             # cnfci2c.nfc_exit(self.__context)
  */
-  __pyx_t_2 = ((__pyx_v_result < 0) != 0);
-  if (__pyx_t_2) {
+  __pyx_t_1 = ((__pyx_v_result < 0) != 0);
+  if (__pyx_t_1) {
 
-    /* "nfci2c.pyx":86
+    /* "nfci2c.pyx":112
  *             # cnfci2c.nfc_close(self.__device)
  *             # cnfci2c.nfc_exit(self.__context)
  *             raise IOError("Unable to open NFC device")             # <<<<<<<<<<<<<<
  * 
  *     def __dealloc__(self):
  */
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_IOError, __pyx_tuple__3, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 86, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_1);
-    __Pyx_Raise(__pyx_t_1, 0, 0, 0);
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __PYX_ERR(0, 86, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_IOError, __pyx_tuple__4, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 112, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __Pyx_Raise(__pyx_t_3, 0, 0, 0);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __PYX_ERR(0, 112, __pyx_L1_error)
 
-    /* "nfci2c.pyx":83
+    /* "nfci2c.pyx":109
  *         # set as NFC initiator
  *         cdef int result = cnfci2c.nfc_initiator_init(self.__device)
  *         if result < 0:             # <<<<<<<<<<<<<<
@@ -1692,19 +1856,21 @@ static int __pyx_pf_6nfci2c_6Nfci2c___cinit__(struct __pyx_obj_6nfci2c_Nfci2c *_
  */
   }
 
-  /* "nfci2c.pyx":53
+  /* "nfci2c.pyx":61
  * 
  * 
- *     def __cinit__(self, bytes connstring):             # <<<<<<<<<<<<<<
+ *     def __cinit__(self, bytes connstring=None,             # <<<<<<<<<<<<<<
+ *                      int muxAddr=0x70, int muxChannel=-1):
  *         """Initialize the NFC device as an initiator
- * 
  */
 
   /* function exit code */
   __pyx_r = 0;
   goto __pyx_L0;
   __pyx_L1_error:;
-  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_5);
   __Pyx_AddTraceback("nfci2c.Nfci2c.__cinit__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   __pyx_L0:;
@@ -1712,12 +1878,12 @@ static int __pyx_pf_6nfci2c_6Nfci2c___cinit__(struct __pyx_obj_6nfci2c_Nfci2c *_
   return __pyx_r;
 }
 
-/* "nfci2c.pyx":88
+/* "nfci2c.pyx":114
  *             raise IOError("Unable to open NFC device")
  * 
  *     def __dealloc__(self):             # <<<<<<<<<<<<<<
  *         """Close the NFC device"""
- *         if self.__device is not NULL:
+ *         # set the I2C mux if using
  */
 
 /* Python wrapper */
@@ -1733,21 +1899,53 @@ static void __pyx_pw_6nfci2c_6Nfci2c_3__dealloc__(PyObject *__pyx_v_self) {
 
 static void __pyx_pf_6nfci2c_6Nfci2c_2__dealloc__(struct __pyx_obj_6nfci2c_Nfci2c *__pyx_v_self) {
   __Pyx_RefNannyDeclarations
-  int __pyx_t_1;
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  int __pyx_t_4;
   __Pyx_RefNannySetupContext("__dealloc__", 0);
 
-  /* "nfci2c.pyx":90
- *     def __dealloc__(self):
+  /* "nfci2c.pyx":117
  *         """Close the NFC device"""
+ *         # set the I2C mux if using
+ *         self._selectChannel()             # <<<<<<<<<<<<<<
+ * 
+ *         if self.__device is not NULL:
+ */
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_selectChannel); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 117, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = NULL;
+  if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
+    __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_2);
+    if (likely(__pyx_t_3)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+      __Pyx_INCREF(__pyx_t_3);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_2, function);
+    }
+  }
+  if (__pyx_t_3) {
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 117, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  } else {
+    __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 117, __pyx_L1_error)
+  }
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "nfci2c.pyx":119
+ *         self._selectChannel()
+ * 
  *         if self.__device is not NULL:             # <<<<<<<<<<<<<<
  *             cnfci2c.nfc_close(self.__device)
  *         if self.__context is not NULL:
  */
-  __pyx_t_1 = ((__pyx_v_self->__pyx___device != NULL) != 0);
-  if (__pyx_t_1) {
+  __pyx_t_4 = ((__pyx_v_self->__pyx___device != NULL) != 0);
+  if (__pyx_t_4) {
 
-    /* "nfci2c.pyx":91
- *         """Close the NFC device"""
+    /* "nfci2c.pyx":120
+ * 
  *         if self.__device is not NULL:
  *             cnfci2c.nfc_close(self.__device)             # <<<<<<<<<<<<<<
  *         if self.__context is not NULL:
@@ -1755,26 +1953,26 @@ static void __pyx_pf_6nfci2c_6Nfci2c_2__dealloc__(struct __pyx_obj_6nfci2c_Nfci2
  */
     nfc_close(__pyx_v_self->__pyx___device);
 
-    /* "nfci2c.pyx":90
- *     def __dealloc__(self):
- *         """Close the NFC device"""
+    /* "nfci2c.pyx":119
+ *         self._selectChannel()
+ * 
  *         if self.__device is not NULL:             # <<<<<<<<<<<<<<
  *             cnfci2c.nfc_close(self.__device)
  *         if self.__context is not NULL:
  */
   }
 
-  /* "nfci2c.pyx":92
+  /* "nfci2c.pyx":121
  *         if self.__device is not NULL:
  *             cnfci2c.nfc_close(self.__device)
  *         if self.__context is not NULL:             # <<<<<<<<<<<<<<
  *             cnfci2c.nfc_exit(self.__context)
  * 
  */
-  __pyx_t_1 = ((__pyx_v_self->__pyx___context != NULL) != 0);
-  if (__pyx_t_1) {
+  __pyx_t_4 = ((__pyx_v_self->__pyx___context != NULL) != 0);
+  if (__pyx_t_4) {
 
-    /* "nfci2c.pyx":93
+    /* "nfci2c.pyx":122
  *             cnfci2c.nfc_close(self.__device)
  *         if self.__context is not NULL:
  *             cnfci2c.nfc_exit(self.__context)             # <<<<<<<<<<<<<<
@@ -1783,7 +1981,7 @@ static void __pyx_pf_6nfci2c_6Nfci2c_2__dealloc__(struct __pyx_obj_6nfci2c_Nfci2
  */
     nfc_exit(__pyx_v_self->__pyx___context);
 
-    /* "nfci2c.pyx":92
+    /* "nfci2c.pyx":121
  *         if self.__device is not NULL:
  *             cnfci2c.nfc_close(self.__device)
  *         if self.__context is not NULL:             # <<<<<<<<<<<<<<
@@ -1792,19 +1990,26 @@ static void __pyx_pf_6nfci2c_6Nfci2c_2__dealloc__(struct __pyx_obj_6nfci2c_Nfci2
  */
   }
 
-  /* "nfci2c.pyx":88
+  /* "nfci2c.pyx":114
  *             raise IOError("Unable to open NFC device")
  * 
  *     def __dealloc__(self):             # <<<<<<<<<<<<<<
  *         """Close the NFC device"""
- *         if self.__device is not NULL:
+ *         # set the I2C mux if using
  */
 
   /* function exit code */
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_WriteUnraisable("nfci2c.Nfci2c.__dealloc__", __pyx_clineno, __pyx_lineno, __pyx_filename, 1, 0);
+  __pyx_L0:;
   __Pyx_RefNannyFinishContext();
 }
 
-/* "nfci2c.pyx":95
+/* "nfci2c.pyx":124
  *             cnfci2c.nfc_exit(self.__context)
  * 
  *     cpdef object getTag(self):             # <<<<<<<<<<<<<<
@@ -1833,7 +2038,7 @@ static PyObject *__pyx_f_6nfci2c_6Nfci2c_getTag(struct __pyx_obj_6nfci2c_Nfci2c 
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
   else if (unlikely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0)) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_getTag); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 95, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_getTag); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 124, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_6nfci2c_6Nfci2c_5getTag)) {
       __Pyx_XDECREF(__pyx_r);
@@ -1849,10 +2054,10 @@ static PyObject *__pyx_f_6nfci2c_6Nfci2c_getTag(struct __pyx_obj_6nfci2c_Nfci2c 
         }
       }
       if (__pyx_t_4) {
-        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 95, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 124, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       } else {
-        __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 95, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 124, __pyx_L1_error)
       }
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -1864,7 +2069,7 @@ static PyObject *__pyx_f_6nfci2c_6Nfci2c_getTag(struct __pyx_obj_6nfci2c_Nfci2c 
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "nfci2c.pyx":106
+  /* "nfci2c.pyx":135
  *         """
  *         cdef cnfci2c.nfc_modulation nm
  *         nm.nmt = cnfci2c.NMT_ISO14443A             # <<<<<<<<<<<<<<
@@ -1873,37 +2078,66 @@ static PyObject *__pyx_f_6nfci2c_6Nfci2c_getTag(struct __pyx_obj_6nfci2c_Nfci2c 
  */
   __pyx_v_nm.nmt = NMT_ISO14443A;
 
-  /* "nfci2c.pyx":107
+  /* "nfci2c.pyx":136
  *         cdef cnfci2c.nfc_modulation nm
  *         nm.nmt = cnfci2c.NMT_ISO14443A
  *         nm.nbr = cnfci2c.NBR_106             # <<<<<<<<<<<<<<
  *         cdef array.array tag = array.array('B')
- *         cdef int result = cnfci2c.nfc_initiator_list_passive_targets(
+ * 
  */
   __pyx_v_nm.nbr = NBR_106;
 
-  /* "nfci2c.pyx":108
+  /* "nfci2c.pyx":137
  *         nm.nmt = cnfci2c.NMT_ISO14443A
  *         nm.nbr = cnfci2c.NBR_106
  *         cdef array.array tag = array.array('B')             # <<<<<<<<<<<<<<
- *         cdef int result = cnfci2c.nfc_initiator_list_passive_targets(
- *                               self.__device, nm, &self.__target, 1)
+ * 
+ *         # set the I2C mux if using
  */
-  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7cpython_5array_array), __pyx_tuple__4, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 108, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7cpython_5array_array), __pyx_tuple__5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 137, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_tag = ((arrayobject *)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "nfci2c.pyx":109
- *         nm.nbr = cnfci2c.NBR_106
- *         cdef array.array tag = array.array('B')
+  /* "nfci2c.pyx":140
+ * 
+ *         # set the I2C mux if using
+ *         self._selectChannel()             # <<<<<<<<<<<<<<
+ * 
+ *         cdef int result = cnfci2c.nfc_initiator_list_passive_targets(
+ */
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_selectChannel); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 140, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = NULL;
+  if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
+    __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_2);
+    if (likely(__pyx_t_3)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+      __Pyx_INCREF(__pyx_t_3);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_2, function);
+    }
+  }
+  if (__pyx_t_3) {
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 140, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  } else {
+    __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 140, __pyx_L1_error)
+  }
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "nfci2c.pyx":142
+ *         self._selectChannel()
+ * 
  *         cdef int result = cnfci2c.nfc_initiator_list_passive_targets(             # <<<<<<<<<<<<<<
  *                               self.__device, nm, &self.__target, 1)
  *         if result < 0:
  */
   __pyx_v_result = nfc_initiator_list_passive_targets(__pyx_v_self->__pyx___device, __pyx_v_nm, (&__pyx_v_self->__pyx___target), 1);
 
-  /* "nfci2c.pyx":111
+  /* "nfci2c.pyx":144
  *         cdef int result = cnfci2c.nfc_initiator_list_passive_targets(
  *                               self.__device, nm, &self.__target, 1)
  *         if result < 0:             # <<<<<<<<<<<<<<
@@ -1913,20 +2147,20 @@ static PyObject *__pyx_f_6nfci2c_6Nfci2c_getTag(struct __pyx_obj_6nfci2c_Nfci2c 
   __pyx_t_5 = ((__pyx_v_result < 0) != 0);
   if (__pyx_t_5) {
 
-    /* "nfci2c.pyx":112
+    /* "nfci2c.pyx":145
  *                               self.__device, nm, &self.__target, 1)
  *         if result < 0:
  *             raise IOError("Error reading NFC tag")             # <<<<<<<<<<<<<<
  *         elif result > 0:
  *             for i in range(self.__target.nti.nai.szUidLen):
  */
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_IOError, __pyx_tuple__5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 112, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_IOError, __pyx_tuple__6, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 145, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_Raise(__pyx_t_1, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __PYX_ERR(0, 112, __pyx_L1_error)
+    __PYX_ERR(0, 145, __pyx_L1_error)
 
-    /* "nfci2c.pyx":111
+    /* "nfci2c.pyx":144
  *         cdef int result = cnfci2c.nfc_initiator_list_passive_targets(
  *                               self.__device, nm, &self.__target, 1)
  *         if result < 0:             # <<<<<<<<<<<<<<
@@ -1935,7 +2169,7 @@ static PyObject *__pyx_f_6nfci2c_6Nfci2c_getTag(struct __pyx_obj_6nfci2c_Nfci2c 
  */
   }
 
-  /* "nfci2c.pyx":113
+  /* "nfci2c.pyx":146
  *         if result < 0:
  *             raise IOError("Error reading NFC tag")
  *         elif result > 0:             # <<<<<<<<<<<<<<
@@ -1945,7 +2179,7 @@ static PyObject *__pyx_f_6nfci2c_6Nfci2c_getTag(struct __pyx_obj_6nfci2c_Nfci2c 
   __pyx_t_5 = ((__pyx_v_result > 0) != 0);
   if (__pyx_t_5) {
 
-    /* "nfci2c.pyx":114
+    /* "nfci2c.pyx":147
  *             raise IOError("Error reading NFC tag")
  *         elif result > 0:
  *             for i in range(self.__target.nti.nai.szUidLen):             # <<<<<<<<<<<<<<
@@ -1956,20 +2190,20 @@ static PyObject *__pyx_f_6nfci2c_6Nfci2c_getTag(struct __pyx_obj_6nfci2c_Nfci2c 
     for (__pyx_t_7 = 0; __pyx_t_7 < __pyx_t_6; __pyx_t_7+=1) {
       __pyx_v_i = __pyx_t_7;
 
-      /* "nfci2c.pyx":115
+      /* "nfci2c.pyx":148
  *         elif result > 0:
  *             for i in range(self.__target.nti.nai.szUidLen):
  *                 tag.append(self.__target.nti.nai.abtUid[i])             # <<<<<<<<<<<<<<
  *             return(tag)
  *         else:
  */
-      __pyx_t_1 = __Pyx_PyInt_From_uint8_t((__pyx_v_self->__pyx___target.nti.nai.abtUid[__pyx_v_i])); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 115, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyInt_From_uint8_t((__pyx_v_self->__pyx___target.nti.nai.abtUid[__pyx_v_i])); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 148, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_8 = __Pyx_PyObject_Append(((PyObject *)__pyx_v_tag), __pyx_t_1); if (unlikely(__pyx_t_8 == ((int)-1))) __PYX_ERR(0, 115, __pyx_L1_error)
+      __pyx_t_8 = __Pyx_PyObject_Append(((PyObject *)__pyx_v_tag), __pyx_t_1); if (unlikely(__pyx_t_8 == ((int)-1))) __PYX_ERR(0, 148, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     }
 
-    /* "nfci2c.pyx":116
+    /* "nfci2c.pyx":149
  *             for i in range(self.__target.nti.nai.szUidLen):
  *                 tag.append(self.__target.nti.nai.abtUid[i])
  *             return(tag)             # <<<<<<<<<<<<<<
@@ -1981,7 +2215,7 @@ static PyObject *__pyx_f_6nfci2c_6Nfci2c_getTag(struct __pyx_obj_6nfci2c_Nfci2c 
     __pyx_r = ((PyObject *)__pyx_v_tag);
     goto __pyx_L0;
 
-    /* "nfci2c.pyx":113
+    /* "nfci2c.pyx":146
  *         if result < 0:
  *             raise IOError("Error reading NFC tag")
  *         elif result > 0:             # <<<<<<<<<<<<<<
@@ -1990,7 +2224,7 @@ static PyObject *__pyx_f_6nfci2c_6Nfci2c_getTag(struct __pyx_obj_6nfci2c_Nfci2c 
  */
   }
 
-  /* "nfci2c.pyx":118
+  /* "nfci2c.pyx":151
  *             return(tag)
  *         else:
  *             return None             # <<<<<<<<<<<<<<
@@ -2004,7 +2238,7 @@ static PyObject *__pyx_f_6nfci2c_6Nfci2c_getTag(struct __pyx_obj_6nfci2c_Nfci2c 
     goto __pyx_L0;
   }
 
-  /* "nfci2c.pyx":95
+  /* "nfci2c.pyx":124
  *             cnfci2c.nfc_exit(self.__context)
  * 
  *     cpdef object getTag(self):             # <<<<<<<<<<<<<<
@@ -2047,7 +2281,7 @@ static PyObject *__pyx_pf_6nfci2c_6Nfci2c_4getTag(struct __pyx_obj_6nfci2c_Nfci2
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("getTag", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_6nfci2c_6Nfci2c_getTag(__pyx_v_self, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 95, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_6nfci2c_6Nfci2c_getTag(__pyx_v_self, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 124, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -2064,7 +2298,7 @@ static PyObject *__pyx_pf_6nfci2c_6Nfci2c_4getTag(struct __pyx_obj_6nfci2c_Nfci2
   return __pyx_r;
 }
 
-/* "nfci2c.pyx":120
+/* "nfci2c.pyx":153
  *             return None
  * 
  *     cpdef bint isTagPresent(self):             # <<<<<<<<<<<<<<
@@ -2087,7 +2321,7 @@ static int __pyx_f_6nfci2c_6Nfci2c_isTagPresent(struct __pyx_obj_6nfci2c_Nfci2c 
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
   else if (unlikely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0)) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_isTagPresent); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 120, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_isTagPresent); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 153, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_6nfci2c_6Nfci2c_7isTagPresent)) {
       __Pyx_INCREF(__pyx_t_1);
@@ -2102,14 +2336,14 @@ static int __pyx_f_6nfci2c_6Nfci2c_isTagPresent(struct __pyx_obj_6nfci2c_Nfci2c 
         }
       }
       if (__pyx_t_4) {
-        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 120, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 153, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       } else {
-        __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 120, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 153, __pyx_L1_error)
       }
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      __pyx_t_5 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_5 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 120, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_5 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 153, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __pyx_r = __pyx_t_5;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -2118,26 +2352,55 @@ static int __pyx_f_6nfci2c_6Nfci2c_isTagPresent(struct __pyx_obj_6nfci2c_Nfci2c 
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "nfci2c.pyx":126
- *             True if a tag is present, false if not
+  /* "nfci2c.pyx":160
  *         """
+ *         # set the I2C mux if using
+ *         self._selectChannel()             # <<<<<<<<<<<<<<
+ * 
+ *         cdef bint result = cnfci2c.nfc_initiator_target_is_present(
+ */
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_selectChannel); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 160, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = NULL;
+  if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
+    __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_2);
+    if (likely(__pyx_t_3)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+      __Pyx_INCREF(__pyx_t_3);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_2, function);
+    }
+  }
+  if (__pyx_t_3) {
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 160, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  } else {
+    __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 160, __pyx_L1_error)
+  }
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "nfci2c.pyx":162
+ *         self._selectChannel()
+ * 
  *         cdef bint result = cnfci2c.nfc_initiator_target_is_present(             # <<<<<<<<<<<<<<
  *                                  self.__device, NULL)
  *         return(not result)
  */
   __pyx_v_result = nfc_initiator_target_is_present(__pyx_v_self->__pyx___device, NULL);
 
-  /* "nfci2c.pyx":128
+  /* "nfci2c.pyx":164
  *         cdef bint result = cnfci2c.nfc_initiator_target_is_present(
  *                                  self.__device, NULL)
  *         return(not result)             # <<<<<<<<<<<<<<
  * 
- *     cdef _wakeup(self, bytes connstring):
+ *     cdef _wakeup(self):
  */
   __pyx_r = (!(__pyx_v_result != 0));
   goto __pyx_L0;
 
-  /* "nfci2c.pyx":120
+  /* "nfci2c.pyx":153
  *             return None
  * 
  *     cpdef bint isTagPresent(self):             # <<<<<<<<<<<<<<
@@ -2178,7 +2441,7 @@ static PyObject *__pyx_pf_6nfci2c_6Nfci2c_6isTagPresent(struct __pyx_obj_6nfci2c
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("isTagPresent", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyBool_FromLong(__pyx_f_6nfci2c_6Nfci2c_isTagPresent(__pyx_v_self, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 120, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyBool_FromLong(__pyx_f_6nfci2c_6Nfci2c_isTagPresent(__pyx_v_self, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 153, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -2195,20 +2458,425 @@ static PyObject *__pyx_pf_6nfci2c_6Nfci2c_6isTagPresent(struct __pyx_obj_6nfci2c
   return __pyx_r;
 }
 
-/* "nfci2c.pyx":130
+/* "nfci2c.pyx":166
  *         return(not result)
  * 
- *     cdef _wakeup(self, bytes connstring):             # <<<<<<<<<<<<<<
+ *     cdef _wakeup(self):             # <<<<<<<<<<<<<<
  *         # Tries to wake up the NFC module by quick writing to it
- *         if connstring:
+ * 
  */
 
-static PyObject *__pyx_f_6nfci2c_6Nfci2c__wakeup(CYTHON_UNUSED struct __pyx_obj_6nfci2c_Nfci2c *__pyx_v_self, PyObject *__pyx_v_connstring) {
-  PyObject *__pyx_v_i2c_num = NULL;
+static PyObject *__pyx_f_6nfci2c_6Nfci2c__wakeup(struct __pyx_obj_6nfci2c_Nfci2c *__pyx_v_self) {
   int __pyx_v_success;
   PyObject *__pyx_v_error_count = NULL;
   PyObject *__pyx_v_bus = NULL;
   CYTHON_UNUSED PyObject *__pyx_v_e = NULL;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_4 = NULL;
+  PyObject *__pyx_t_5 = NULL;
+  int __pyx_t_6;
+  int __pyx_t_7;
+  PyObject *__pyx_t_8 = NULL;
+  PyObject *__pyx_t_9 = NULL;
+  PyObject *__pyx_t_10 = NULL;
+  int __pyx_t_11;
+  int __pyx_t_12;
+  char const *__pyx_t_13;
+  PyObject *__pyx_t_14 = NULL;
+  PyObject *__pyx_t_15 = NULL;
+  PyObject *__pyx_t_16 = NULL;
+  __Pyx_RefNannySetupContext("_wakeup", 0);
+
+  /* "nfci2c.pyx":169
+ *         # Tries to wake up the NFC module by quick writing to it
+ * 
+ *         success = False             # <<<<<<<<<<<<<<
+ *         error_count = 0
+ *         bus = smbus.SMBus(self.__busAddr)
+ */
+  __pyx_v_success = 0;
+
+  /* "nfci2c.pyx":170
+ * 
+ *         success = False
+ *         error_count = 0             # <<<<<<<<<<<<<<
+ *         bus = smbus.SMBus(self.__busAddr)
+ * 
+ */
+  __Pyx_INCREF(__pyx_int_0);
+  __pyx_v_error_count = __pyx_int_0;
+
+  /* "nfci2c.pyx":171
+ *         success = False
+ *         error_count = 0
+ *         bus = smbus.SMBus(self.__busAddr)             # <<<<<<<<<<<<<<
+ * 
+ *         # try 5 times to wake up the chip
+ */
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_smbus); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 171, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_SMBus); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 171, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_self->__pyx___busAddr); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 171, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_4 = NULL;
+  if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
+    __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_3);
+    if (likely(__pyx_t_4)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+      __Pyx_INCREF(__pyx_t_4);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_3, function);
+    }
+  }
+  if (!__pyx_t_4) {
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 171, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __Pyx_GOTREF(__pyx_t_1);
+  } else {
+    #if CYTHON_FAST_PYCALL
+    if (PyFunction_Check(__pyx_t_3)) {
+      PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_2};
+      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 171, __pyx_L1_error)
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    } else
+    #endif
+    #if CYTHON_FAST_PYCCALL
+    if (__Pyx_PyFastCFunction_Check(__pyx_t_3)) {
+      PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_2};
+      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 171, __pyx_L1_error)
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    } else
+    #endif
+    {
+      __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 171, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_5);
+      __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_4); __pyx_t_4 = NULL;
+      __Pyx_GIVEREF(__pyx_t_2);
+      PyTuple_SET_ITEM(__pyx_t_5, 0+1, __pyx_t_2);
+      __pyx_t_2 = 0;
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 171, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+    }
+  }
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __pyx_v_bus = __pyx_t_1;
+  __pyx_t_1 = 0;
+
+  /* "nfci2c.pyx":174
+ * 
+ *         # try 5 times to wake up the chip
+ *         while not success and error_count < 5:             # <<<<<<<<<<<<<<
+ *             try:
+ *                 bus.write_quick(0x24)
+ */
+  while (1) {
+    __pyx_t_7 = ((!(__pyx_v_success != 0)) != 0);
+    if (__pyx_t_7) {
+    } else {
+      __pyx_t_6 = __pyx_t_7;
+      goto __pyx_L5_bool_binop_done;
+    }
+    __pyx_t_1 = PyObject_RichCompare(__pyx_v_error_count, __pyx_int_5, Py_LT); __Pyx_XGOTREF(__pyx_t_1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 174, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_7 < 0)) __PYX_ERR(0, 174, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __pyx_t_6 = __pyx_t_7;
+    __pyx_L5_bool_binop_done:;
+    if (!__pyx_t_6) break;
+
+    /* "nfci2c.pyx":175
+ *         # try 5 times to wake up the chip
+ *         while not success and error_count < 5:
+ *             try:             # <<<<<<<<<<<<<<
+ *                 bus.write_quick(0x24)
+ *             except IOError as e:
+ */
+    /*try:*/ {
+      {
+        __Pyx_PyThreadState_declare
+        __Pyx_PyThreadState_assign
+        __Pyx_ExceptionSave(&__pyx_t_8, &__pyx_t_9, &__pyx_t_10);
+        __Pyx_XGOTREF(__pyx_t_8);
+        __Pyx_XGOTREF(__pyx_t_9);
+        __Pyx_XGOTREF(__pyx_t_10);
+        /*try:*/ {
+
+          /* "nfci2c.pyx":176
+ *         while not success and error_count < 5:
+ *             try:
+ *                 bus.write_quick(0x24)             # <<<<<<<<<<<<<<
+ *             except IOError as e:
+ *                 error_count = error_count + 1
+ */
+          __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_bus, __pyx_n_s_write_quick); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 176, __pyx_L12_error)
+          __Pyx_GOTREF(__pyx_t_1);
+          __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_tuple__7, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 176, __pyx_L12_error)
+          __Pyx_GOTREF(__pyx_t_3);
+          __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+
+          /* "nfci2c.pyx":175
+ *         # try 5 times to wake up the chip
+ *         while not success and error_count < 5:
+ *             try:             # <<<<<<<<<<<<<<
+ *                 bus.write_quick(0x24)
+ *             except IOError as e:
+ */
+        }
+
+        /* "nfci2c.pyx":180
+ *                 error_count = error_count + 1
+ *             else:
+ *                 success = True             # <<<<<<<<<<<<<<
+ *             finally:
+ *                 # give chip time to wake up
+ */
+        /*else:*/ {
+          __pyx_v_success = 1;
+        }
+        __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
+        __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
+        __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+        goto __pyx_L19_try_end;
+        __pyx_L12_error:;
+        __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+        __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+        __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
+        __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+        __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+
+        /* "nfci2c.pyx":177
+ *             try:
+ *                 bus.write_quick(0x24)
+ *             except IOError as e:             # <<<<<<<<<<<<<<
+ *                 error_count = error_count + 1
+ *             else:
+ */
+        __pyx_t_11 = __Pyx_PyErr_ExceptionMatches(__pyx_builtin_IOError);
+        if (__pyx_t_11) {
+          __Pyx_AddTraceback("nfci2c.Nfci2c._wakeup", __pyx_clineno, __pyx_lineno, __pyx_filename);
+          if (__Pyx_GetException(&__pyx_t_3, &__pyx_t_1, &__pyx_t_5) < 0) __PYX_ERR(0, 177, __pyx_L14_except_error)
+          __Pyx_GOTREF(__pyx_t_3);
+          __Pyx_GOTREF(__pyx_t_1);
+          __Pyx_GOTREF(__pyx_t_5);
+          __Pyx_INCREF(__pyx_t_1);
+          __Pyx_XDECREF_SET(__pyx_v_e, __pyx_t_1);
+
+          /* "nfci2c.pyx":178
+ *                 bus.write_quick(0x24)
+ *             except IOError as e:
+ *                 error_count = error_count + 1             # <<<<<<<<<<<<<<
+ *             else:
+ *                 success = True
+ */
+          __pyx_t_2 = __Pyx_PyInt_AddObjC(__pyx_v_error_count, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 178, __pyx_L14_except_error)
+          __Pyx_GOTREF(__pyx_t_2);
+          __Pyx_DECREF_SET(__pyx_v_error_count, __pyx_t_2);
+          __pyx_t_2 = 0;
+          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+          __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+          __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+          goto __pyx_L13_exception_handled;
+        }
+        goto __pyx_L14_except_error;
+        __pyx_L14_except_error:;
+
+        /* "nfci2c.pyx":175
+ *         # try 5 times to wake up the chip
+ *         while not success and error_count < 5:
+ *             try:             # <<<<<<<<<<<<<<
+ *                 bus.write_quick(0x24)
+ *             except IOError as e:
+ */
+        __Pyx_XGIVEREF(__pyx_t_8);
+        __Pyx_XGIVEREF(__pyx_t_9);
+        __Pyx_XGIVEREF(__pyx_t_10);
+        __Pyx_ExceptionReset(__pyx_t_8, __pyx_t_9, __pyx_t_10);
+        goto __pyx_L10_error;
+        __pyx_L13_exception_handled:;
+        __Pyx_XGIVEREF(__pyx_t_8);
+        __Pyx_XGIVEREF(__pyx_t_9);
+        __Pyx_XGIVEREF(__pyx_t_10);
+        __Pyx_ExceptionReset(__pyx_t_8, __pyx_t_9, __pyx_t_10);
+        __pyx_L19_try_end:;
+      }
+    }
+
+    /* "nfci2c.pyx":183
+ *             finally:
+ *                 # give chip time to wake up
+ *                 time.sleep(0.5)             # <<<<<<<<<<<<<<
+ * 
+ *         # if we still haven't woken up, then something's wrong
+ */
+    /*finally:*/ {
+      /*normal exit:*/{
+        __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_time); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 183, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_5);
+        __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_sleep); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 183, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_1);
+        __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+        __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_tuple__8, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 183, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_5);
+        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+        __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+        goto __pyx_L11;
+      }
+      __pyx_L10_error:;
+      /*exception exit:*/{
+        __Pyx_PyThreadState_declare
+        __Pyx_PyThreadState_assign
+        __pyx_t_10 = 0; __pyx_t_9 = 0; __pyx_t_8 = 0; __pyx_t_14 = 0; __pyx_t_15 = 0; __pyx_t_16 = 0;
+        __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+        __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+        __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+        __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+        __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
+        if (PY_MAJOR_VERSION >= 3) __Pyx_ExceptionSwap(&__pyx_t_14, &__pyx_t_15, &__pyx_t_16);
+        if ((PY_MAJOR_VERSION < 3) || unlikely(__Pyx_GetException(&__pyx_t_10, &__pyx_t_9, &__pyx_t_8) < 0)) __Pyx_ErrFetch(&__pyx_t_10, &__pyx_t_9, &__pyx_t_8);
+        __Pyx_XGOTREF(__pyx_t_10);
+        __Pyx_XGOTREF(__pyx_t_9);
+        __Pyx_XGOTREF(__pyx_t_8);
+        __Pyx_XGOTREF(__pyx_t_14);
+        __Pyx_XGOTREF(__pyx_t_15);
+        __Pyx_XGOTREF(__pyx_t_16);
+        __pyx_t_11 = __pyx_lineno; __pyx_t_12 = __pyx_clineno; __pyx_t_13 = __pyx_filename;
+        {
+          __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_time); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 183, __pyx_L25_error)
+          __Pyx_GOTREF(__pyx_t_5);
+          __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_sleep); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 183, __pyx_L25_error)
+          __Pyx_GOTREF(__pyx_t_1);
+          __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+          __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_tuple__9, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 183, __pyx_L25_error)
+          __Pyx_GOTREF(__pyx_t_5);
+          __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+          __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+        }
+        if (PY_MAJOR_VERSION >= 3) {
+          __Pyx_XGIVEREF(__pyx_t_14);
+          __Pyx_XGIVEREF(__pyx_t_15);
+          __Pyx_XGIVEREF(__pyx_t_16);
+          __Pyx_ExceptionReset(__pyx_t_14, __pyx_t_15, __pyx_t_16);
+        }
+        __Pyx_XGIVEREF(__pyx_t_10);
+        __Pyx_XGIVEREF(__pyx_t_9);
+        __Pyx_XGIVEREF(__pyx_t_8);
+        __Pyx_ErrRestore(__pyx_t_10, __pyx_t_9, __pyx_t_8);
+        __pyx_t_10 = 0; __pyx_t_9 = 0; __pyx_t_8 = 0; __pyx_t_14 = 0; __pyx_t_15 = 0; __pyx_t_16 = 0;
+        __pyx_lineno = __pyx_t_11; __pyx_clineno = __pyx_t_12; __pyx_filename = __pyx_t_13;
+        goto __pyx_L1_error;
+        __pyx_L25_error:;
+        if (PY_MAJOR_VERSION >= 3) {
+          __Pyx_XGIVEREF(__pyx_t_14);
+          __Pyx_XGIVEREF(__pyx_t_15);
+          __Pyx_XGIVEREF(__pyx_t_16);
+          __Pyx_ExceptionReset(__pyx_t_14, __pyx_t_15, __pyx_t_16);
+        }
+        __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+        __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
+        __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
+        __pyx_t_14 = 0; __pyx_t_15 = 0; __pyx_t_16 = 0;
+        goto __pyx_L1_error;
+      }
+      __pyx_L11:;
+    }
+  }
+
+  /* "nfci2c.pyx":186
+ * 
+ *         # if we still haven't woken up, then something's wrong
+ *         if error_count >= 5:             # <<<<<<<<<<<<<<
+ *             raise IOError("Cannot wake NFC device ")
+ * 
+ */
+  __pyx_t_5 = PyObject_RichCompare(__pyx_v_error_count, __pyx_int_5, Py_GE); __Pyx_XGOTREF(__pyx_t_5); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 186, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_5); if (unlikely(__pyx_t_6 < 0)) __PYX_ERR(0, 186, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+  if (__pyx_t_6) {
+
+    /* "nfci2c.pyx":187
+ *         # if we still haven't woken up, then something's wrong
+ *         if error_count >= 5:
+ *             raise IOError("Cannot wake NFC device ")             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+    __pyx_t_5 = __Pyx_PyObject_Call(__pyx_builtin_IOError, __pyx_tuple__10, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 187, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_5);
+    __Pyx_Raise(__pyx_t_5, 0, 0, 0);
+    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+    __PYX_ERR(0, 187, __pyx_L1_error)
+
+    /* "nfci2c.pyx":186
+ * 
+ *         # if we still haven't woken up, then something's wrong
+ *         if error_count >= 5:             # <<<<<<<<<<<<<<
+ *             raise IOError("Cannot wake NFC device ")
+ * 
+ */
+  }
+
+  /* "nfci2c.pyx":166
+ *         return(not result)
+ * 
+ *     cdef _wakeup(self):             # <<<<<<<<<<<<<<
+ *         # Tries to wake up the NFC module by quick writing to it
+ * 
+ */
+
+  /* function exit code */
+  __pyx_r = Py_None; __Pyx_INCREF(Py_None);
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_5);
+  __Pyx_AddTraceback("nfci2c.Nfci2c._wakeup", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = 0;
+  __pyx_L0:;
+  __Pyx_XDECREF(__pyx_v_error_count);
+  __Pyx_XDECREF(__pyx_v_bus);
+  __Pyx_XDECREF(__pyx_v_e);
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "nfci2c.pyx":190
+ * 
+ * 
+ *     def _selectChannel(self):             # <<<<<<<<<<<<<<
+ *         if self.__muxChannel != -1:
+ *             bus = smbus.SMBus(self.__busAddr)
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_6nfci2c_6Nfci2c_9_selectChannel(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static PyObject *__pyx_pw_6nfci2c_6Nfci2c_9_selectChannel(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("_selectChannel (wrapper)", 0);
+  __pyx_r = __pyx_pf_6nfci2c_6Nfci2c_8_selectChannel(((struct __pyx_obj_6nfci2c_Nfci2c *)__pyx_v_self));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_6nfci2c_6Nfci2c_8_selectChannel(struct __pyx_obj_6nfci2c_Nfci2c *__pyx_v_self) {
+  PyObject *__pyx_v_bus = NULL;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   int __pyx_t_1;
@@ -2216,401 +2884,189 @@ static PyObject *__pyx_f_6nfci2c_6Nfci2c__wakeup(CYTHON_UNUSED struct __pyx_obj_
   PyObject *__pyx_t_3 = NULL;
   PyObject *__pyx_t_4 = NULL;
   PyObject *__pyx_t_5 = NULL;
-  int __pyx_t_6;
-  PyObject *__pyx_t_7 = NULL;
+  PyObject *__pyx_t_6 = NULL;
+  int __pyx_t_7;
   PyObject *__pyx_t_8 = NULL;
-  PyObject *__pyx_t_9 = NULL;
-  int __pyx_t_10;
-  int __pyx_t_11;
-  char const *__pyx_t_12;
-  PyObject *__pyx_t_13 = NULL;
-  PyObject *__pyx_t_14 = NULL;
-  PyObject *__pyx_t_15 = NULL;
-  __Pyx_RefNannySetupContext("_wakeup", 0);
+  __Pyx_RefNannySetupContext("_selectChannel", 0);
 
-  /* "nfci2c.pyx":132
- *     cdef _wakeup(self, bytes connstring):
- *         # Tries to wake up the NFC module by quick writing to it
- *         if connstring:             # <<<<<<<<<<<<<<
- *             # get port number using magic
- *             i2c_num = int(bytes(connstring).rsplit(b'i2c-', 1)[1])
+  /* "nfci2c.pyx":191
+ * 
+ *     def _selectChannel(self):
+ *         if self.__muxChannel != -1:             # <<<<<<<<<<<<<<
+ *             bus = smbus.SMBus(self.__busAddr)
+ *             bus.write_byte(self.__muxAddr, 1 << self.__muxChannel)
  */
-  __pyx_t_1 = (__pyx_v_connstring != Py_None) && (PyBytes_GET_SIZE(__pyx_v_connstring) != 0);
+  __pyx_t_1 = ((__pyx_v_self->__pyx___muxChannel != -1L) != 0);
   if (__pyx_t_1) {
 
-    /* "nfci2c.pyx":134
- *         if connstring:
- *             # get port number using magic
- *             i2c_num = int(bytes(connstring).rsplit(b'i2c-', 1)[1])             # <<<<<<<<<<<<<<
- * 
- *             success = False
+    /* "nfci2c.pyx":192
+ *     def _selectChannel(self):
+ *         if self.__muxChannel != -1:
+ *             bus = smbus.SMBus(self.__busAddr)             # <<<<<<<<<<<<<<
+ *             bus.write_byte(self.__muxAddr, 1 << self.__muxChannel)
+ *             bus.close()
  */
-    __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 134, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __Pyx_INCREF(__pyx_v_connstring);
-    __Pyx_GIVEREF(__pyx_v_connstring);
-    PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_v_connstring);
-    __pyx_t_3 = __Pyx_PyObject_Call(((PyObject *)(&PyBytes_Type)), __pyx_t_2, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 134, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_smbus); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 192, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_rsplit); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 134, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_tuple__6, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 134, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_2 = __Pyx_GetItemInt(__pyx_t_3, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 134, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __pyx_t_3 = __Pyx_PyNumber_Int(__pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 134, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_v_i2c_num = __pyx_t_3;
-    __pyx_t_3 = 0;
-
-    /* "nfci2c.pyx":136
- *             i2c_num = int(bytes(connstring).rsplit(b'i2c-', 1)[1])
- * 
- *             success = False             # <<<<<<<<<<<<<<
- *             error_count = 0
- *             bus = smbus.SMBus(i2c_num)
- */
-    __pyx_v_success = 0;
-
-    /* "nfci2c.pyx":137
- * 
- *             success = False
- *             error_count = 0             # <<<<<<<<<<<<<<
- *             bus = smbus.SMBus(i2c_num)
- * 
- */
-    __Pyx_INCREF(__pyx_int_0);
-    __pyx_v_error_count = __pyx_int_0;
-
-    /* "nfci2c.pyx":138
- *             success = False
- *             error_count = 0
- *             bus = smbus.SMBus(i2c_num)             # <<<<<<<<<<<<<<
- * 
- *             # try 5 times to wake up the chip
- */
-    __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_smbus); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 138, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_SMBus); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 138, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_SMBus); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 192, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_2 = NULL;
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_self->__pyx___busAddr); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 192, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_5 = NULL;
     if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_4))) {
-      __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_4);
-      if (likely(__pyx_t_2)) {
+      __pyx_t_5 = PyMethod_GET_SELF(__pyx_t_4);
+      if (likely(__pyx_t_5)) {
         PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_4);
-        __Pyx_INCREF(__pyx_t_2);
+        __Pyx_INCREF(__pyx_t_5);
         __Pyx_INCREF(function);
         __Pyx_DECREF_SET(__pyx_t_4, function);
       }
     }
-    if (!__pyx_t_2) {
-      __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_v_i2c_num); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 138, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_3);
+    if (!__pyx_t_5) {
+      __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 192, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      __Pyx_GOTREF(__pyx_t_2);
     } else {
       #if CYTHON_FAST_PYCALL
       if (PyFunction_Check(__pyx_t_4)) {
-        PyObject *__pyx_temp[2] = {__pyx_t_2, __pyx_v_i2c_num};
-        __pyx_t_3 = __Pyx_PyFunction_FastCall(__pyx_t_4, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 138, __pyx_L1_error)
-        __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-        __Pyx_GOTREF(__pyx_t_3);
+        PyObject *__pyx_temp[2] = {__pyx_t_5, __pyx_t_3};
+        __pyx_t_2 = __Pyx_PyFunction_FastCall(__pyx_t_4, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 192, __pyx_L1_error)
+        __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
+        __Pyx_GOTREF(__pyx_t_2);
+        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
       } else
       #endif
       #if CYTHON_FAST_PYCCALL
       if (__Pyx_PyFastCFunction_Check(__pyx_t_4)) {
-        PyObject *__pyx_temp[2] = {__pyx_t_2, __pyx_v_i2c_num};
-        __pyx_t_3 = __Pyx_PyCFunction_FastCall(__pyx_t_4, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 138, __pyx_L1_error)
-        __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-        __Pyx_GOTREF(__pyx_t_3);
+        PyObject *__pyx_temp[2] = {__pyx_t_5, __pyx_t_3};
+        __pyx_t_2 = __Pyx_PyCFunction_FastCall(__pyx_t_4, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 192, __pyx_L1_error)
+        __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
+        __Pyx_GOTREF(__pyx_t_2);
+        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
       } else
       #endif
       {
-        __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 138, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_5);
-        __Pyx_GIVEREF(__pyx_t_2); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_2); __pyx_t_2 = NULL;
-        __Pyx_INCREF(__pyx_v_i2c_num);
-        __Pyx_GIVEREF(__pyx_v_i2c_num);
-        PyTuple_SET_ITEM(__pyx_t_5, 0+1, __pyx_v_i2c_num);
-        __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_5, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 138, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_3);
-        __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+        __pyx_t_6 = PyTuple_New(1+1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 192, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_6);
+        __Pyx_GIVEREF(__pyx_t_5); PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_5); __pyx_t_5 = NULL;
+        __Pyx_GIVEREF(__pyx_t_3);
+        PyTuple_SET_ITEM(__pyx_t_6, 0+1, __pyx_t_3);
+        __pyx_t_3 = 0;
+        __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_6, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 192, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_2);
+        __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       }
     }
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_v_bus = __pyx_t_3;
-    __pyx_t_3 = 0;
+    __pyx_v_bus = __pyx_t_2;
+    __pyx_t_2 = 0;
 
-    /* "nfci2c.pyx":141
- * 
- *             # try 5 times to wake up the chip
- *             while not success and error_count < 5:             # <<<<<<<<<<<<<<
- *                 try:
- *                     bus.write_quick(0x24)
+    /* "nfci2c.pyx":193
+ *         if self.__muxChannel != -1:
+ *             bus = smbus.SMBus(self.__busAddr)
+ *             bus.write_byte(self.__muxAddr, 1 << self.__muxChannel)             # <<<<<<<<<<<<<<
+ *             bus.close()
  */
-    while (1) {
-      __pyx_t_6 = ((!(__pyx_v_success != 0)) != 0);
-      if (__pyx_t_6) {
-      } else {
-        __pyx_t_1 = __pyx_t_6;
-        goto __pyx_L6_bool_binop_done;
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_bus, __pyx_n_s_write_byte); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 193, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_4);
+    __pyx_t_6 = __Pyx_PyInt_From_int(__pyx_v_self->__pyx___muxAddr); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 193, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_6);
+    __pyx_t_3 = __Pyx_PyInt_From_long((1 << __pyx_v_self->__pyx___muxChannel)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 193, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_5 = NULL;
+    __pyx_t_7 = 0;
+    if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_4))) {
+      __pyx_t_5 = PyMethod_GET_SELF(__pyx_t_4);
+      if (likely(__pyx_t_5)) {
+        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_4);
+        __Pyx_INCREF(__pyx_t_5);
+        __Pyx_INCREF(function);
+        __Pyx_DECREF_SET(__pyx_t_4, function);
+        __pyx_t_7 = 1;
       }
-      __pyx_t_3 = PyObject_RichCompare(__pyx_v_error_count, __pyx_int_5, Py_LT); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 141, __pyx_L1_error)
-      __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_6 < 0)) __PYX_ERR(0, 141, __pyx_L1_error)
+    }
+    #if CYTHON_FAST_PYCALL
+    if (PyFunction_Check(__pyx_t_4)) {
+      PyObject *__pyx_temp[3] = {__pyx_t_5, __pyx_t_6, __pyx_t_3};
+      __pyx_t_2 = __Pyx_PyFunction_FastCall(__pyx_t_4, __pyx_temp+1-__pyx_t_7, 2+__pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 193, __pyx_L1_error)
+      __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
+      __Pyx_GOTREF(__pyx_t_2);
+      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      __pyx_t_1 = __pyx_t_6;
-      __pyx_L6_bool_binop_done:;
-      if (!__pyx_t_1) break;
-
-      /* "nfci2c.pyx":142
- *             # try 5 times to wake up the chip
- *             while not success and error_count < 5:
- *                 try:             # <<<<<<<<<<<<<<
- *                     bus.write_quick(0x24)
- *                 except IOError as e:
- */
-      /*try:*/ {
-        {
-          __Pyx_PyThreadState_declare
-          __Pyx_PyThreadState_assign
-          __Pyx_ExceptionSave(&__pyx_t_7, &__pyx_t_8, &__pyx_t_9);
-          __Pyx_XGOTREF(__pyx_t_7);
-          __Pyx_XGOTREF(__pyx_t_8);
-          __Pyx_XGOTREF(__pyx_t_9);
-          /*try:*/ {
-
-            /* "nfci2c.pyx":143
- *             while not success and error_count < 5:
- *                 try:
- *                     bus.write_quick(0x24)             # <<<<<<<<<<<<<<
- *                 except IOError as e:
- *                     error_count = error_count + 1
- */
-            __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_bus, __pyx_n_s_write_quick); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 143, __pyx_L13_error)
-            __Pyx_GOTREF(__pyx_t_3);
-            __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_tuple__7, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 143, __pyx_L13_error)
-            __Pyx_GOTREF(__pyx_t_4);
-            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-            __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-
-            /* "nfci2c.pyx":142
- *             # try 5 times to wake up the chip
- *             while not success and error_count < 5:
- *                 try:             # <<<<<<<<<<<<<<
- *                     bus.write_quick(0x24)
- *                 except IOError as e:
- */
-          }
-
-          /* "nfci2c.pyx":147
- *                     error_count = error_count + 1
- *                 else:
- *                     success = True             # <<<<<<<<<<<<<<
- *                 finally:
- *                     # give chip time to wake up
- */
-          /*else:*/ {
-            __pyx_v_success = 1;
-          }
-          __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-          __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-          __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
-          goto __pyx_L20_try_end;
-          __pyx_L13_error:;
-          __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-          __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-          __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-          __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-
-          /* "nfci2c.pyx":144
- *                 try:
- *                     bus.write_quick(0x24)
- *                 except IOError as e:             # <<<<<<<<<<<<<<
- *                     error_count = error_count + 1
- *                 else:
- */
-          __pyx_t_10 = __Pyx_PyErr_ExceptionMatches(__pyx_builtin_IOError);
-          if (__pyx_t_10) {
-            __Pyx_AddTraceback("nfci2c.Nfci2c._wakeup", __pyx_clineno, __pyx_lineno, __pyx_filename);
-            if (__Pyx_GetException(&__pyx_t_4, &__pyx_t_3, &__pyx_t_5) < 0) __PYX_ERR(0, 144, __pyx_L15_except_error)
-            __Pyx_GOTREF(__pyx_t_4);
-            __Pyx_GOTREF(__pyx_t_3);
-            __Pyx_GOTREF(__pyx_t_5);
-            __Pyx_INCREF(__pyx_t_3);
-            __Pyx_XDECREF_SET(__pyx_v_e, __pyx_t_3);
-
-            /* "nfci2c.pyx":145
- *                     bus.write_quick(0x24)
- *                 except IOError as e:
- *                     error_count = error_count + 1             # <<<<<<<<<<<<<<
- *                 else:
- *                     success = True
- */
-            __pyx_t_2 = __Pyx_PyInt_AddObjC(__pyx_v_error_count, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 145, __pyx_L15_except_error)
-            __Pyx_GOTREF(__pyx_t_2);
-            __Pyx_DECREF_SET(__pyx_v_error_count, __pyx_t_2);
-            __pyx_t_2 = 0;
-            __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-            __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-            goto __pyx_L14_exception_handled;
-          }
-          goto __pyx_L15_except_error;
-          __pyx_L15_except_error:;
-
-          /* "nfci2c.pyx":142
- *             # try 5 times to wake up the chip
- *             while not success and error_count < 5:
- *                 try:             # <<<<<<<<<<<<<<
- *                     bus.write_quick(0x24)
- *                 except IOError as e:
- */
-          __Pyx_XGIVEREF(__pyx_t_7);
-          __Pyx_XGIVEREF(__pyx_t_8);
-          __Pyx_XGIVEREF(__pyx_t_9);
-          __Pyx_ExceptionReset(__pyx_t_7, __pyx_t_8, __pyx_t_9);
-          goto __pyx_L11_error;
-          __pyx_L14_exception_handled:;
-          __Pyx_XGIVEREF(__pyx_t_7);
-          __Pyx_XGIVEREF(__pyx_t_8);
-          __Pyx_XGIVEREF(__pyx_t_9);
-          __Pyx_ExceptionReset(__pyx_t_7, __pyx_t_8, __pyx_t_9);
-          __pyx_L20_try_end:;
-        }
+    } else
+    #endif
+    #if CYTHON_FAST_PYCCALL
+    if (__Pyx_PyFastCFunction_Check(__pyx_t_4)) {
+      PyObject *__pyx_temp[3] = {__pyx_t_5, __pyx_t_6, __pyx_t_3};
+      __pyx_t_2 = __Pyx_PyCFunction_FastCall(__pyx_t_4, __pyx_temp+1-__pyx_t_7, 2+__pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 193, __pyx_L1_error)
+      __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
+      __Pyx_GOTREF(__pyx_t_2);
+      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    } else
+    #endif
+    {
+      __pyx_t_8 = PyTuple_New(2+__pyx_t_7); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 193, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_8);
+      if (__pyx_t_5) {
+        __Pyx_GIVEREF(__pyx_t_5); PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_5); __pyx_t_5 = NULL;
       }
+      __Pyx_GIVEREF(__pyx_t_6);
+      PyTuple_SET_ITEM(__pyx_t_8, 0+__pyx_t_7, __pyx_t_6);
+      __Pyx_GIVEREF(__pyx_t_3);
+      PyTuple_SET_ITEM(__pyx_t_8, 1+__pyx_t_7, __pyx_t_3);
+      __pyx_t_6 = 0;
+      __pyx_t_3 = 0;
+      __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_8, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 193, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+    }
+    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-      /* "nfci2c.pyx":150
- *                 finally:
- *                     # give chip time to wake up
- *                     time.sleep(0.5)             # <<<<<<<<<<<<<<
- * 
- *             # if we still haven't woken up, then something's wrong
+    /* "nfci2c.pyx":194
+ *             bus = smbus.SMBus(self.__busAddr)
+ *             bus.write_byte(self.__muxAddr, 1 << self.__muxChannel)
+ *             bus.close()             # <<<<<<<<<<<<<<
  */
-      /*finally:*/ {
-        /*normal exit:*/{
-          __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_time); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 150, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_5);
-          __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_sleep); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 150, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_3);
-          __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-          __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_tuple__8, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 150, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_5);
-          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-          __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-          goto __pyx_L12;
-        }
-        __pyx_L11_error:;
-        /*exception exit:*/{
-          __Pyx_PyThreadState_declare
-          __Pyx_PyThreadState_assign
-          __pyx_t_9 = 0; __pyx_t_8 = 0; __pyx_t_7 = 0; __pyx_t_13 = 0; __pyx_t_14 = 0; __pyx_t_15 = 0;
-          __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-          __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-          __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-          __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-          if (PY_MAJOR_VERSION >= 3) __Pyx_ExceptionSwap(&__pyx_t_13, &__pyx_t_14, &__pyx_t_15);
-          if ((PY_MAJOR_VERSION < 3) || unlikely(__Pyx_GetException(&__pyx_t_9, &__pyx_t_8, &__pyx_t_7) < 0)) __Pyx_ErrFetch(&__pyx_t_9, &__pyx_t_8, &__pyx_t_7);
-          __Pyx_XGOTREF(__pyx_t_9);
-          __Pyx_XGOTREF(__pyx_t_8);
-          __Pyx_XGOTREF(__pyx_t_7);
-          __Pyx_XGOTREF(__pyx_t_13);
-          __Pyx_XGOTREF(__pyx_t_14);
-          __Pyx_XGOTREF(__pyx_t_15);
-          __pyx_t_10 = __pyx_lineno; __pyx_t_11 = __pyx_clineno; __pyx_t_12 = __pyx_filename;
-          {
-            __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_time); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 150, __pyx_L26_error)
-            __Pyx_GOTREF(__pyx_t_5);
-            __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_sleep); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 150, __pyx_L26_error)
-            __Pyx_GOTREF(__pyx_t_3);
-            __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-            __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_tuple__9, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 150, __pyx_L26_error)
-            __Pyx_GOTREF(__pyx_t_5);
-            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-            __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-          }
-          if (PY_MAJOR_VERSION >= 3) {
-            __Pyx_XGIVEREF(__pyx_t_13);
-            __Pyx_XGIVEREF(__pyx_t_14);
-            __Pyx_XGIVEREF(__pyx_t_15);
-            __Pyx_ExceptionReset(__pyx_t_13, __pyx_t_14, __pyx_t_15);
-          }
-          __Pyx_XGIVEREF(__pyx_t_9);
-          __Pyx_XGIVEREF(__pyx_t_8);
-          __Pyx_XGIVEREF(__pyx_t_7);
-          __Pyx_ErrRestore(__pyx_t_9, __pyx_t_8, __pyx_t_7);
-          __pyx_t_9 = 0; __pyx_t_8 = 0; __pyx_t_7 = 0; __pyx_t_13 = 0; __pyx_t_14 = 0; __pyx_t_15 = 0;
-          __pyx_lineno = __pyx_t_10; __pyx_clineno = __pyx_t_11; __pyx_filename = __pyx_t_12;
-          goto __pyx_L1_error;
-          __pyx_L26_error:;
-          if (PY_MAJOR_VERSION >= 3) {
-            __Pyx_XGIVEREF(__pyx_t_13);
-            __Pyx_XGIVEREF(__pyx_t_14);
-            __Pyx_XGIVEREF(__pyx_t_15);
-            __Pyx_ExceptionReset(__pyx_t_13, __pyx_t_14, __pyx_t_15);
-          }
-          __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
-          __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-          __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-          __pyx_t_13 = 0; __pyx_t_14 = 0; __pyx_t_15 = 0;
-          goto __pyx_L1_error;
-        }
-        __pyx_L12:;
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_bus, __pyx_n_s_close); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 194, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_4);
+    __pyx_t_8 = NULL;
+    if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_4))) {
+      __pyx_t_8 = PyMethod_GET_SELF(__pyx_t_4);
+      if (likely(__pyx_t_8)) {
+        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_4);
+        __Pyx_INCREF(__pyx_t_8);
+        __Pyx_INCREF(function);
+        __Pyx_DECREF_SET(__pyx_t_4, function);
       }
     }
-
-    /* "nfci2c.pyx":153
- * 
- *             # if we still haven't woken up, then something's wrong
- *             if error_count >= 5:             # <<<<<<<<<<<<<<
- *                 raise IOError("Cannot wake NFC device ")
- * 
- */
-    __pyx_t_5 = PyObject_RichCompare(__pyx_v_error_count, __pyx_int_5, Py_GE); __Pyx_XGOTREF(__pyx_t_5); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 153, __pyx_L1_error)
-    __pyx_t_1 = __Pyx_PyObject_IsTrue(__pyx_t_5); if (unlikely(__pyx_t_1 < 0)) __PYX_ERR(0, 153, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (__pyx_t_1) {
-
-      /* "nfci2c.pyx":154
- *             # if we still haven't woken up, then something's wrong
- *             if error_count >= 5:
- *                 raise IOError("Cannot wake NFC device ")             # <<<<<<<<<<<<<<
- * 
- * 
- */
-      __pyx_t_5 = __Pyx_PyObject_Call(__pyx_builtin_IOError, __pyx_tuple__10, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 154, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_5);
-      __Pyx_Raise(__pyx_t_5, 0, 0, 0);
-      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      __PYX_ERR(0, 154, __pyx_L1_error)
-
-      /* "nfci2c.pyx":153
- * 
- *             # if we still haven't woken up, then something's wrong
- *             if error_count >= 5:             # <<<<<<<<<<<<<<
- *                 raise IOError("Cannot wake NFC device ")
- * 
- */
+    if (__pyx_t_8) {
+      __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_8); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 194, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+    } else {
+      __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_4); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 194, __pyx_L1_error)
     }
+    __Pyx_GOTREF(__pyx_t_2);
+    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-    /* "nfci2c.pyx":132
- *     cdef _wakeup(self, bytes connstring):
- *         # Tries to wake up the NFC module by quick writing to it
- *         if connstring:             # <<<<<<<<<<<<<<
- *             # get port number using magic
- *             i2c_num = int(bytes(connstring).rsplit(b'i2c-', 1)[1])
+    /* "nfci2c.pyx":191
+ * 
+ *     def _selectChannel(self):
+ *         if self.__muxChannel != -1:             # <<<<<<<<<<<<<<
+ *             bus = smbus.SMBus(self.__busAddr)
+ *             bus.write_byte(self.__muxAddr, 1 << self.__muxChannel)
  */
   }
 
-  /* "nfci2c.pyx":130
- *         return(not result)
+  /* "nfci2c.pyx":190
  * 
- *     cdef _wakeup(self, bytes connstring):             # <<<<<<<<<<<<<<
- *         # Tries to wake up the NFC module by quick writing to it
- *         if connstring:
+ * 
+ *     def _selectChannel(self):             # <<<<<<<<<<<<<<
+ *         if self.__muxChannel != -1:
+ *             bus = smbus.SMBus(self.__busAddr)
  */
 
   /* function exit code */
@@ -2621,13 +3077,12 @@ static PyObject *__pyx_f_6nfci2c_6Nfci2c__wakeup(CYTHON_UNUSED struct __pyx_obj_
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_5);
-  __Pyx_AddTraceback("nfci2c.Nfci2c._wakeup", __pyx_clineno, __pyx_lineno, __pyx_filename);
-  __pyx_r = 0;
+  __Pyx_XDECREF(__pyx_t_6);
+  __Pyx_XDECREF(__pyx_t_8);
+  __Pyx_AddTraceback("nfci2c.Nfci2c._selectChannel", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
   __pyx_L0:;
-  __Pyx_XDECREF(__pyx_v_i2c_num);
-  __Pyx_XDECREF(__pyx_v_error_count);
   __Pyx_XDECREF(__pyx_v_bus);
-  __Pyx_XDECREF(__pyx_v_e);
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
@@ -2640,19 +3095,19 @@ static PyObject *__pyx_f_6nfci2c_6Nfci2c__wakeup(CYTHON_UNUSED struct __pyx_obj_
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_6nfci2c_6Nfci2c_9__reduce_cython__(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static PyObject *__pyx_pw_6nfci2c_6Nfci2c_9__reduce_cython__(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
+static PyObject *__pyx_pw_6nfci2c_6Nfci2c_11__reduce_cython__(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static PyObject *__pyx_pw_6nfci2c_6Nfci2c_11__reduce_cython__(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__reduce_cython__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_6nfci2c_6Nfci2c_8__reduce_cython__(((struct __pyx_obj_6nfci2c_Nfci2c *)__pyx_v_self));
+  __pyx_r = __pyx_pf_6nfci2c_6Nfci2c_10__reduce_cython__(((struct __pyx_obj_6nfci2c_Nfci2c *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_6nfci2c_6Nfci2c_8__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_6nfci2c_Nfci2c *__pyx_v_self) {
+static PyObject *__pyx_pf_6nfci2c_6Nfci2c_10__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_6nfci2c_Nfci2c *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -2694,19 +3149,19 @@ static PyObject *__pyx_pf_6nfci2c_6Nfci2c_8__reduce_cython__(CYTHON_UNUSED struc
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_6nfci2c_6Nfci2c_11__setstate_cython__(PyObject *__pyx_v_self, PyObject *__pyx_v___pyx_state); /*proto*/
-static PyObject *__pyx_pw_6nfci2c_6Nfci2c_11__setstate_cython__(PyObject *__pyx_v_self, PyObject *__pyx_v___pyx_state) {
+static PyObject *__pyx_pw_6nfci2c_6Nfci2c_13__setstate_cython__(PyObject *__pyx_v_self, PyObject *__pyx_v___pyx_state); /*proto*/
+static PyObject *__pyx_pw_6nfci2c_6Nfci2c_13__setstate_cython__(PyObject *__pyx_v_self, PyObject *__pyx_v___pyx_state) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__setstate_cython__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_6nfci2c_6Nfci2c_10__setstate_cython__(((struct __pyx_obj_6nfci2c_Nfci2c *)__pyx_v_self), ((PyObject *)__pyx_v___pyx_state));
+  __pyx_r = __pyx_pf_6nfci2c_6Nfci2c_12__setstate_cython__(((struct __pyx_obj_6nfci2c_Nfci2c *)__pyx_v_self), ((PyObject *)__pyx_v___pyx_state));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_6nfci2c_6Nfci2c_10__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_6nfci2c_Nfci2c *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state) {
+static PyObject *__pyx_pf_6nfci2c_6Nfci2c_12__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_6nfci2c_Nfci2c *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -3413,8 +3868,9 @@ static void __pyx_tp_dealloc_6nfci2c_Nfci2c(PyObject *o) {
 static PyMethodDef __pyx_methods_6nfci2c_Nfci2c[] = {
   {"getTag", (PyCFunction)__pyx_pw_6nfci2c_6Nfci2c_5getTag, METH_NOARGS, __pyx_doc_6nfci2c_6Nfci2c_4getTag},
   {"isTagPresent", (PyCFunction)__pyx_pw_6nfci2c_6Nfci2c_7isTagPresent, METH_NOARGS, __pyx_doc_6nfci2c_6Nfci2c_6isTagPresent},
-  {"__reduce_cython__", (PyCFunction)__pyx_pw_6nfci2c_6Nfci2c_9__reduce_cython__, METH_NOARGS, 0},
-  {"__setstate_cython__", (PyCFunction)__pyx_pw_6nfci2c_6Nfci2c_11__setstate_cython__, METH_O, 0},
+  {"_selectChannel", (PyCFunction)__pyx_pw_6nfci2c_6Nfci2c_9_selectChannel, METH_NOARGS, 0},
+  {"__reduce_cython__", (PyCFunction)__pyx_pw_6nfci2c_6Nfci2c_11__reduce_cython__, METH_NOARGS, 0},
+  {"__setstate_cython__", (PyCFunction)__pyx_pw_6nfci2c_6Nfci2c_13__setstate_cython__, METH_O, 0},
   {0, 0, 0, 0}
 };
 
@@ -3444,7 +3900,7 @@ static PyTypeObject __pyx_type_6nfci2c_Nfci2c = {
   0, /*tp_setattro*/
   0, /*tp_as_buffer*/
   Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_VERSION_TAG|Py_TPFLAGS_CHECKTYPES|Py_TPFLAGS_HAVE_NEWBUFFER|Py_TPFLAGS_BASETYPE, /*tp_flags*/
-  "Interface for a pn532-based NFC chip\n\n    Attributes:\n        __context (nfc_context*): Handle for the libnfc library\n        __device (nfc_device*): NFC device (i.e., pn532 chip)\n        __target (nfc_target): NFC tag\n    ", /*tp_doc*/
+  "Interface for a pn532-based NFC chip\n\n    Attributes:\n        __context (nfc_context*): Handle for the libnfc library\n        __device (nfc_device*): NFC device (i.e., pn532 chip)\n        __target (nfc_target): NFC tag\n        __busAddr (int): SMBus port number of I2C bus\n        __muxAddr (int): I2C address of I2C mux (i.e., Adafruit TCA9548A)A\n        __muxChannel (int): Channel on I2C mux (-1 if not using mux)\n\n    ", /*tp_doc*/
   0, /*tp_traverse*/
   0, /*tp_clear*/
   0, /*tp_richcompare*/
@@ -3525,6 +3981,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_append, __pyx_k_append, sizeof(__pyx_k_append), 0, 0, 1, 1},
   {&__pyx_n_s_array, __pyx_k_array, sizeof(__pyx_k_array), 0, 0, 1, 1},
   {&__pyx_n_s_cline_in_traceback, __pyx_k_cline_in_traceback, sizeof(__pyx_k_cline_in_traceback), 0, 0, 1, 1},
+  {&__pyx_n_s_close, __pyx_k_close, sizeof(__pyx_k_close), 0, 0, 1, 1},
   {&__pyx_n_s_connstring, __pyx_k_connstring, sizeof(__pyx_k_connstring), 0, 0, 1, 1},
   {&__pyx_n_s_getTag, __pyx_k_getTag, sizeof(__pyx_k_getTag), 0, 0, 1, 1},
   {&__pyx_n_s_getstate, __pyx_k_getstate, sizeof(__pyx_k_getstate), 0, 0, 1, 1},
@@ -3532,6 +3989,8 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_import, __pyx_k_import, sizeof(__pyx_k_import), 0, 0, 1, 1},
   {&__pyx_n_s_isTagPresent, __pyx_k_isTagPresent, sizeof(__pyx_k_isTagPresent), 0, 0, 1, 1},
   {&__pyx_n_s_main, __pyx_k_main, sizeof(__pyx_k_main), 0, 0, 1, 1},
+  {&__pyx_n_s_muxAddr, __pyx_k_muxAddr, sizeof(__pyx_k_muxAddr), 0, 0, 1, 1},
+  {&__pyx_n_s_muxChannel, __pyx_k_muxChannel, sizeof(__pyx_k_muxChannel), 0, 0, 1, 1},
   {&__pyx_n_s_name, __pyx_k_name, sizeof(__pyx_k_name), 0, 0, 1, 1},
   {&__pyx_kp_s_no_default___reduce___due_to_non, __pyx_k_no_default___reduce___due_to_non, sizeof(__pyx_k_no_default___reduce___due_to_non), 0, 0, 1, 0},
   {&__pyx_n_s_pyx_vtable, __pyx_k_pyx_vtable, sizeof(__pyx_k_pyx_vtable), 0, 0, 1, 1},
@@ -3540,19 +3999,21 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_reduce_cython, __pyx_k_reduce_cython, sizeof(__pyx_k_reduce_cython), 0, 0, 1, 1},
   {&__pyx_n_s_reduce_ex, __pyx_k_reduce_ex, sizeof(__pyx_k_reduce_ex), 0, 0, 1, 1},
   {&__pyx_n_s_rsplit, __pyx_k_rsplit, sizeof(__pyx_k_rsplit), 0, 0, 1, 1},
+  {&__pyx_n_s_selectChannel, __pyx_k_selectChannel, sizeof(__pyx_k_selectChannel), 0, 0, 1, 1},
   {&__pyx_n_s_setstate, __pyx_k_setstate, sizeof(__pyx_k_setstate), 0, 0, 1, 1},
   {&__pyx_n_s_setstate_cython, __pyx_k_setstate_cython, sizeof(__pyx_k_setstate_cython), 0, 0, 1, 1},
   {&__pyx_n_s_sleep, __pyx_k_sleep, sizeof(__pyx_k_sleep), 0, 0, 1, 1},
   {&__pyx_n_s_smbus, __pyx_k_smbus, sizeof(__pyx_k_smbus), 0, 0, 1, 1},
   {&__pyx_n_s_test, __pyx_k_test, sizeof(__pyx_k_test), 0, 0, 1, 1},
   {&__pyx_n_s_time, __pyx_k_time, sizeof(__pyx_k_time), 0, 0, 1, 1},
+  {&__pyx_n_s_write_byte, __pyx_k_write_byte, sizeof(__pyx_k_write_byte), 0, 0, 1, 1},
   {&__pyx_n_s_write_quick, __pyx_k_write_quick, sizeof(__pyx_k_write_quick), 0, 0, 1, 1},
   {0, 0, 0, 0, 0, 0, 0}
 };
 static int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_MemoryError = __Pyx_GetBuiltinName(__pyx_n_s_MemoryError); if (!__pyx_builtin_MemoryError) __PYX_ERR(0, 68, __pyx_L1_error)
-  __pyx_builtin_IOError = __Pyx_GetBuiltinName(__pyx_n_s_IOError); if (!__pyx_builtin_IOError) __PYX_ERR(0, 79, __pyx_L1_error)
-  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 114, __pyx_L1_error)
+  __pyx_builtin_MemoryError = __Pyx_GetBuiltinName(__pyx_n_s_MemoryError); if (!__pyx_builtin_MemoryError) __PYX_ERR(0, 94, __pyx_L1_error)
+  __pyx_builtin_IOError = __Pyx_GetBuiltinName(__pyx_n_s_IOError); if (!__pyx_builtin_IOError) __PYX_ERR(0, 105, __pyx_L1_error)
+  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 147, __pyx_L1_error)
   __pyx_builtin_TypeError = __Pyx_GetBuiltinName(__pyx_n_s_TypeError); if (!__pyx_builtin_TypeError) __PYX_ERR(1, 2, __pyx_L1_error)
   return 0;
   __pyx_L1_error:;
@@ -3563,105 +4024,105 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__Pyx_InitCachedConstants", 0);
 
-  /* "nfci2c.pyx":68
+  /* "nfci2c.pyx":79
+ *         if connstring:
+ *             # get port number using magic
+ *             self.__busAddr = int(bytes(connstring).rsplit(b'i2c-', 1)[1])             # <<<<<<<<<<<<<<
+ * 
+ *         # get the I2C mux parameters
+ */
+  __pyx_tuple_ = PyTuple_Pack(2, __pyx_kp_b_i2c, __pyx_int_1); if (unlikely(!__pyx_tuple_)) __PYX_ERR(0, 79, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple_);
+  __Pyx_GIVEREF(__pyx_tuple_);
+
+  /* "nfci2c.pyx":94
  *         cnfci2c.nfc_init(&self.__context)
  *         if self.__context is NULL:
  *             raise MemoryError("Unable to initialize NFC library")             # <<<<<<<<<<<<<<
  * 
  *         # do we have a connection string?
  */
-  __pyx_tuple_ = PyTuple_Pack(1, __pyx_kp_s_Unable_to_initialize_NFC_library); if (unlikely(!__pyx_tuple_)) __PYX_ERR(0, 68, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple_);
-  __Pyx_GIVEREF(__pyx_tuple_);
+  __pyx_tuple__2 = PyTuple_Pack(1, __pyx_kp_s_Unable_to_initialize_NFC_library); if (unlikely(!__pyx_tuple__2)) __PYX_ERR(0, 94, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__2);
+  __Pyx_GIVEREF(__pyx_tuple__2);
 
-  /* "nfci2c.pyx":79
+  /* "nfci2c.pyx":105
  *         if self.__device is NULL:
  *             # cnfci2c.nfc_exit(self.__context)
  *             raise IOError("Unable to open NFC device")             # <<<<<<<<<<<<<<
  * 
  *         # set as NFC initiator
  */
-  __pyx_tuple__2 = PyTuple_Pack(1, __pyx_kp_s_Unable_to_open_NFC_device); if (unlikely(!__pyx_tuple__2)) __PYX_ERR(0, 79, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__2);
-  __Pyx_GIVEREF(__pyx_tuple__2);
+  __pyx_tuple__3 = PyTuple_Pack(1, __pyx_kp_s_Unable_to_open_NFC_device); if (unlikely(!__pyx_tuple__3)) __PYX_ERR(0, 105, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__3);
+  __Pyx_GIVEREF(__pyx_tuple__3);
 
-  /* "nfci2c.pyx":86
+  /* "nfci2c.pyx":112
  *             # cnfci2c.nfc_close(self.__device)
  *             # cnfci2c.nfc_exit(self.__context)
  *             raise IOError("Unable to open NFC device")             # <<<<<<<<<<<<<<
  * 
  *     def __dealloc__(self):
  */
-  __pyx_tuple__3 = PyTuple_Pack(1, __pyx_kp_s_Unable_to_open_NFC_device); if (unlikely(!__pyx_tuple__3)) __PYX_ERR(0, 86, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__3);
-  __Pyx_GIVEREF(__pyx_tuple__3);
-
-  /* "nfci2c.pyx":108
- *         nm.nmt = cnfci2c.NMT_ISO14443A
- *         nm.nbr = cnfci2c.NBR_106
- *         cdef array.array tag = array.array('B')             # <<<<<<<<<<<<<<
- *         cdef int result = cnfci2c.nfc_initiator_list_passive_targets(
- *                               self.__device, nm, &self.__target, 1)
- */
-  __pyx_tuple__4 = PyTuple_Pack(1, __pyx_n_s_B); if (unlikely(!__pyx_tuple__4)) __PYX_ERR(0, 108, __pyx_L1_error)
+  __pyx_tuple__4 = PyTuple_Pack(1, __pyx_kp_s_Unable_to_open_NFC_device); if (unlikely(!__pyx_tuple__4)) __PYX_ERR(0, 112, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__4);
   __Pyx_GIVEREF(__pyx_tuple__4);
 
-  /* "nfci2c.pyx":112
+  /* "nfci2c.pyx":137
+ *         nm.nmt = cnfci2c.NMT_ISO14443A
+ *         nm.nbr = cnfci2c.NBR_106
+ *         cdef array.array tag = array.array('B')             # <<<<<<<<<<<<<<
+ * 
+ *         # set the I2C mux if using
+ */
+  __pyx_tuple__5 = PyTuple_Pack(1, __pyx_n_s_B); if (unlikely(!__pyx_tuple__5)) __PYX_ERR(0, 137, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__5);
+  __Pyx_GIVEREF(__pyx_tuple__5);
+
+  /* "nfci2c.pyx":145
  *                               self.__device, nm, &self.__target, 1)
  *         if result < 0:
  *             raise IOError("Error reading NFC tag")             # <<<<<<<<<<<<<<
  *         elif result > 0:
  *             for i in range(self.__target.nti.nai.szUidLen):
  */
-  __pyx_tuple__5 = PyTuple_Pack(1, __pyx_kp_s_Error_reading_NFC_tag); if (unlikely(!__pyx_tuple__5)) __PYX_ERR(0, 112, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__5);
-  __Pyx_GIVEREF(__pyx_tuple__5);
-
-  /* "nfci2c.pyx":134
- *         if connstring:
- *             # get port number using magic
- *             i2c_num = int(bytes(connstring).rsplit(b'i2c-', 1)[1])             # <<<<<<<<<<<<<<
- * 
- *             success = False
- */
-  __pyx_tuple__6 = PyTuple_Pack(2, __pyx_kp_b_i2c, __pyx_int_1); if (unlikely(!__pyx_tuple__6)) __PYX_ERR(0, 134, __pyx_L1_error)
+  __pyx_tuple__6 = PyTuple_Pack(1, __pyx_kp_s_Error_reading_NFC_tag); if (unlikely(!__pyx_tuple__6)) __PYX_ERR(0, 145, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__6);
   __Pyx_GIVEREF(__pyx_tuple__6);
 
-  /* "nfci2c.pyx":143
- *             while not success and error_count < 5:
- *                 try:
- *                     bus.write_quick(0x24)             # <<<<<<<<<<<<<<
- *                 except IOError as e:
- *                     error_count = error_count + 1
+  /* "nfci2c.pyx":176
+ *         while not success and error_count < 5:
+ *             try:
+ *                 bus.write_quick(0x24)             # <<<<<<<<<<<<<<
+ *             except IOError as e:
+ *                 error_count = error_count + 1
  */
-  __pyx_tuple__7 = PyTuple_Pack(1, __pyx_int_36); if (unlikely(!__pyx_tuple__7)) __PYX_ERR(0, 143, __pyx_L1_error)
+  __pyx_tuple__7 = PyTuple_Pack(1, __pyx_int_36); if (unlikely(!__pyx_tuple__7)) __PYX_ERR(0, 176, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__7);
   __Pyx_GIVEREF(__pyx_tuple__7);
 
-  /* "nfci2c.pyx":150
- *                 finally:
- *                     # give chip time to wake up
- *                     time.sleep(0.5)             # <<<<<<<<<<<<<<
+  /* "nfci2c.pyx":183
+ *             finally:
+ *                 # give chip time to wake up
+ *                 time.sleep(0.5)             # <<<<<<<<<<<<<<
  * 
- *             # if we still haven't woken up, then something's wrong
+ *         # if we still haven't woken up, then something's wrong
  */
-  __pyx_tuple__8 = PyTuple_Pack(1, __pyx_float_0_5); if (unlikely(!__pyx_tuple__8)) __PYX_ERR(0, 150, __pyx_L1_error)
+  __pyx_tuple__8 = PyTuple_Pack(1, __pyx_float_0_5); if (unlikely(!__pyx_tuple__8)) __PYX_ERR(0, 183, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__8);
   __Pyx_GIVEREF(__pyx_tuple__8);
-  __pyx_tuple__9 = PyTuple_Pack(1, __pyx_float_0_5); if (unlikely(!__pyx_tuple__9)) __PYX_ERR(0, 150, __pyx_L1_error)
+  __pyx_tuple__9 = PyTuple_Pack(1, __pyx_float_0_5); if (unlikely(!__pyx_tuple__9)) __PYX_ERR(0, 183, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__9);
   __Pyx_GIVEREF(__pyx_tuple__9);
 
-  /* "nfci2c.pyx":154
- *             # if we still haven't woken up, then something's wrong
- *             if error_count >= 5:
- *                 raise IOError("Cannot wake NFC device ")             # <<<<<<<<<<<<<<
+  /* "nfci2c.pyx":187
+ *         # if we still haven't woken up, then something's wrong
+ *         if error_count >= 5:
+ *             raise IOError("Cannot wake NFC device ")             # <<<<<<<<<<<<<<
  * 
  * 
  */
-  __pyx_tuple__10 = PyTuple_Pack(1, __pyx_kp_s_Cannot_wake_NFC_device); if (unlikely(!__pyx_tuple__10)) __PYX_ERR(0, 154, __pyx_L1_error)
+  __pyx_tuple__10 = PyTuple_Pack(1, __pyx_kp_s_Cannot_wake_NFC_device); if (unlikely(!__pyx_tuple__10)) __PYX_ERR(0, 187, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__10);
   __Pyx_GIVEREF(__pyx_tuple__10);
 
@@ -3842,12 +4303,12 @@ static int __pyx_pymod_exec_nfci2c(PyObject *__pyx_pyinit_module)
   __pyx_vtabptr_6nfci2c_Nfci2c = &__pyx_vtable_6nfci2c_Nfci2c;
   __pyx_vtable_6nfci2c_Nfci2c.getTag = (PyObject *(*)(struct __pyx_obj_6nfci2c_Nfci2c *, int __pyx_skip_dispatch))__pyx_f_6nfci2c_6Nfci2c_getTag;
   __pyx_vtable_6nfci2c_Nfci2c.isTagPresent = (int (*)(struct __pyx_obj_6nfci2c_Nfci2c *, int __pyx_skip_dispatch))__pyx_f_6nfci2c_6Nfci2c_isTagPresent;
-  __pyx_vtable_6nfci2c_Nfci2c._wakeup = (PyObject *(*)(struct __pyx_obj_6nfci2c_Nfci2c *, PyObject *))__pyx_f_6nfci2c_6Nfci2c__wakeup;
-  if (PyType_Ready(&__pyx_type_6nfci2c_Nfci2c) < 0) __PYX_ERR(0, 40, __pyx_L1_error)
+  __pyx_vtable_6nfci2c_Nfci2c._wakeup = (PyObject *(*)(struct __pyx_obj_6nfci2c_Nfci2c *))__pyx_f_6nfci2c_6Nfci2c__wakeup;
+  if (PyType_Ready(&__pyx_type_6nfci2c_Nfci2c) < 0) __PYX_ERR(0, 41, __pyx_L1_error)
   __pyx_type_6nfci2c_Nfci2c.tp_print = 0;
-  if (__Pyx_SetVtable(__pyx_type_6nfci2c_Nfci2c.tp_dict, __pyx_vtabptr_6nfci2c_Nfci2c) < 0) __PYX_ERR(0, 40, __pyx_L1_error)
-  if (PyObject_SetAttrString(__pyx_m, "Nfci2c", (PyObject *)&__pyx_type_6nfci2c_Nfci2c) < 0) __PYX_ERR(0, 40, __pyx_L1_error)
-  if (__Pyx_setup_reduce((PyObject*)&__pyx_type_6nfci2c_Nfci2c) < 0) __PYX_ERR(0, 40, __pyx_L1_error)
+  if (__Pyx_SetVtable(__pyx_type_6nfci2c_Nfci2c.tp_dict, __pyx_vtabptr_6nfci2c_Nfci2c) < 0) __PYX_ERR(0, 41, __pyx_L1_error)
+  if (PyObject_SetAttrString(__pyx_m, "Nfci2c", (PyObject *)&__pyx_type_6nfci2c_Nfci2c) < 0) __PYX_ERR(0, 41, __pyx_L1_error)
+  if (__Pyx_setup_reduce((PyObject*)&__pyx_type_6nfci2c_Nfci2c) < 0) __PYX_ERR(0, 41, __pyx_L1_error)
   __pyx_ptype_6nfci2c_Nfci2c = &__pyx_type_6nfci2c_Nfci2c;
   /*--- Type import code ---*/
   __pyx_ptype_7cpython_4type_type = __Pyx_ImportType(__Pyx_BUILTIN_MODULE_NAME, "type", 
@@ -3867,40 +4328,40 @@ static int __pyx_pymod_exec_nfci2c(PyObject *__pyx_pyinit_module)
   if (__Pyx_patch_abc() < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   #endif
 
-  /* "nfci2c.pyx":35
+  /* "nfci2c.pyx":36
  * 
  * from cpython cimport array
  * import array             # <<<<<<<<<<<<<<
  * 
  * import smbus as smbus
  */
-  __pyx_t_1 = __Pyx_Import(__pyx_n_s_array, 0, -1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 35, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_Import(__pyx_n_s_array, 0, -1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 36, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_array, __pyx_t_1) < 0) __PYX_ERR(0, 35, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_array, __pyx_t_1) < 0) __PYX_ERR(0, 36, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "nfci2c.pyx":37
+  /* "nfci2c.pyx":38
  * import array
  * 
  * import smbus as smbus             # <<<<<<<<<<<<<<
  * import time
  * 
  */
-  __pyx_t_1 = __Pyx_Import(__pyx_n_s_smbus, 0, -1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 37, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_Import(__pyx_n_s_smbus, 0, -1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 38, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_smbus, __pyx_t_1) < 0) __PYX_ERR(0, 37, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_smbus, __pyx_t_1) < 0) __PYX_ERR(0, 38, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "nfci2c.pyx":38
+  /* "nfci2c.pyx":39
  * 
  * import smbus as smbus
  * import time             # <<<<<<<<<<<<<<
  * 
  * cdef class Nfci2c:
  */
-  __pyx_t_1 = __Pyx_Import(__pyx_n_s_time, 0, -1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 38, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_Import(__pyx_n_s_time, 0, -1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 39, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_time, __pyx_t_1) < 0) __PYX_ERR(0, 38, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_time, __pyx_t_1) < 0) __PYX_ERR(0, 39, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "nfci2c.pyx":1
@@ -4160,188 +4621,92 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_Call(PyObject *func, PyObject *arg
 }
 #endif
 
-/* PyErrFetchRestore */
-#if CYTHON_FAST_THREAD_STATE
-static CYTHON_INLINE void __Pyx_ErrRestoreInState(PyThreadState *tstate, PyObject *type, PyObject *value, PyObject *tb) {
-    PyObject *tmp_type, *tmp_value, *tmp_tb;
-    tmp_type = tstate->curexc_type;
-    tmp_value = tstate->curexc_value;
-    tmp_tb = tstate->curexc_traceback;
-    tstate->curexc_type = type;
-    tstate->curexc_value = value;
-    tstate->curexc_traceback = tb;
-    Py_XDECREF(tmp_type);
-    Py_XDECREF(tmp_value);
-    Py_XDECREF(tmp_tb);
+/* GetItemInt */
+static PyObject *__Pyx_GetItemInt_Generic(PyObject *o, PyObject* j) {
+    PyObject *r;
+    if (!j) return NULL;
+    r = PyObject_GetItem(o, j);
+    Py_DECREF(j);
+    return r;
 }
-static CYTHON_INLINE void __Pyx_ErrFetchInState(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb) {
-    *type = tstate->curexc_type;
-    *value = tstate->curexc_value;
-    *tb = tstate->curexc_traceback;
-    tstate->curexc_type = 0;
-    tstate->curexc_value = 0;
-    tstate->curexc_traceback = 0;
-}
-#endif
-
-/* RaiseException */
-#if PY_MAJOR_VERSION < 3
-static void __Pyx_Raise(PyObject *type, PyObject *value, PyObject *tb,
-                        CYTHON_UNUSED PyObject *cause) {
-    __Pyx_PyThreadState_declare
-    Py_XINCREF(type);
-    if (!value || value == Py_None)
-        value = NULL;
-    else
-        Py_INCREF(value);
-    if (!tb || tb == Py_None)
-        tb = NULL;
-    else {
-        Py_INCREF(tb);
-        if (!PyTraceBack_Check(tb)) {
-            PyErr_SetString(PyExc_TypeError,
-                "raise: arg 3 must be a traceback or None");
-            goto raise_error;
-        }
+static CYTHON_INLINE PyObject *__Pyx_GetItemInt_List_Fast(PyObject *o, Py_ssize_t i,
+                                                              CYTHON_NCP_UNUSED int wraparound,
+                                                              CYTHON_NCP_UNUSED int boundscheck) {
+#if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+    Py_ssize_t wrapped_i = i;
+    if (wraparound & unlikely(i < 0)) {
+        wrapped_i += PyList_GET_SIZE(o);
     }
-    if (PyType_Check(type)) {
-#if CYTHON_COMPILING_IN_PYPY
-        if (!value) {
-            Py_INCREF(Py_None);
-            value = Py_None;
-        }
-#endif
-        PyErr_NormalizeException(&type, &value, &tb);
-    } else {
-        if (value) {
-            PyErr_SetString(PyExc_TypeError,
-                "instance exception may not have a separate value");
-            goto raise_error;
-        }
-        value = type;
-        type = (PyObject*) Py_TYPE(type);
-        Py_INCREF(type);
-        if (!PyType_IsSubtype((PyTypeObject *)type, (PyTypeObject *)PyExc_BaseException)) {
-            PyErr_SetString(PyExc_TypeError,
-                "raise: exception class must be a subclass of BaseException");
-            goto raise_error;
-        }
+    if ((!boundscheck) || likely((0 <= wrapped_i) & (wrapped_i < PyList_GET_SIZE(o)))) {
+        PyObject *r = PyList_GET_ITEM(o, wrapped_i);
+        Py_INCREF(r);
+        return r;
     }
-    __Pyx_PyThreadState_assign
-    __Pyx_ErrRestore(type, value, tb);
-    return;
-raise_error:
-    Py_XDECREF(value);
-    Py_XDECREF(type);
-    Py_XDECREF(tb);
-    return;
-}
+    return __Pyx_GetItemInt_Generic(o, PyInt_FromSsize_t(i));
 #else
-static void __Pyx_Raise(PyObject *type, PyObject *value, PyObject *tb, PyObject *cause) {
-    PyObject* owned_instance = NULL;
-    if (tb == Py_None) {
-        tb = 0;
-    } else if (tb && !PyTraceBack_Check(tb)) {
-        PyErr_SetString(PyExc_TypeError,
-            "raise: arg 3 must be a traceback or None");
-        goto bad;
+    return PySequence_GetItem(o, i);
+#endif
+}
+static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Tuple_Fast(PyObject *o, Py_ssize_t i,
+                                                              CYTHON_NCP_UNUSED int wraparound,
+                                                              CYTHON_NCP_UNUSED int boundscheck) {
+#if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+    Py_ssize_t wrapped_i = i;
+    if (wraparound & unlikely(i < 0)) {
+        wrapped_i += PyTuple_GET_SIZE(o);
     }
-    if (value == Py_None)
-        value = 0;
-    if (PyExceptionInstance_Check(type)) {
-        if (value) {
-            PyErr_SetString(PyExc_TypeError,
-                "instance exception may not have a separate value");
-            goto bad;
+    if ((!boundscheck) || likely((0 <= wrapped_i) & (wrapped_i < PyTuple_GET_SIZE(o)))) {
+        PyObject *r = PyTuple_GET_ITEM(o, wrapped_i);
+        Py_INCREF(r);
+        return r;
+    }
+    return __Pyx_GetItemInt_Generic(o, PyInt_FromSsize_t(i));
+#else
+    return PySequence_GetItem(o, i);
+#endif
+}
+static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Fast(PyObject *o, Py_ssize_t i, int is_list,
+                                                     CYTHON_NCP_UNUSED int wraparound,
+                                                     CYTHON_NCP_UNUSED int boundscheck) {
+#if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS && CYTHON_USE_TYPE_SLOTS
+    if (is_list || PyList_CheckExact(o)) {
+        Py_ssize_t n = ((!wraparound) | likely(i >= 0)) ? i : i + PyList_GET_SIZE(o);
+        if ((!boundscheck) || (likely((n >= 0) & (n < PyList_GET_SIZE(o))))) {
+            PyObject *r = PyList_GET_ITEM(o, n);
+            Py_INCREF(r);
+            return r;
         }
-        value = type;
-        type = (PyObject*) Py_TYPE(value);
-    } else if (PyExceptionClass_Check(type)) {
-        PyObject *instance_class = NULL;
-        if (value && PyExceptionInstance_Check(value)) {
-            instance_class = (PyObject*) Py_TYPE(value);
-            if (instance_class != type) {
-                int is_subclass = PyObject_IsSubclass(instance_class, type);
-                if (!is_subclass) {
-                    instance_class = NULL;
-                } else if (unlikely(is_subclass == -1)) {
-                    goto bad;
+    }
+    else if (PyTuple_CheckExact(o)) {
+        Py_ssize_t n = ((!wraparound) | likely(i >= 0)) ? i : i + PyTuple_GET_SIZE(o);
+        if ((!boundscheck) || likely((n >= 0) & (n < PyTuple_GET_SIZE(o)))) {
+            PyObject *r = PyTuple_GET_ITEM(o, n);
+            Py_INCREF(r);
+            return r;
+        }
+    } else {
+        PySequenceMethods *m = Py_TYPE(o)->tp_as_sequence;
+        if (likely(m && m->sq_item)) {
+            if (wraparound && unlikely(i < 0) && likely(m->sq_length)) {
+                Py_ssize_t l = m->sq_length(o);
+                if (likely(l >= 0)) {
+                    i += l;
                 } else {
-                    type = instance_class;
+                    if (!PyErr_ExceptionMatches(PyExc_OverflowError))
+                        return NULL;
+                    PyErr_Clear();
                 }
             }
+            return m->sq_item(o, i);
         }
-        if (!instance_class) {
-            PyObject *args;
-            if (!value)
-                args = PyTuple_New(0);
-            else if (PyTuple_Check(value)) {
-                Py_INCREF(value);
-                args = value;
-            } else
-                args = PyTuple_Pack(1, value);
-            if (!args)
-                goto bad;
-            owned_instance = PyObject_Call(type, args, NULL);
-            Py_DECREF(args);
-            if (!owned_instance)
-                goto bad;
-            value = owned_instance;
-            if (!PyExceptionInstance_Check(value)) {
-                PyErr_Format(PyExc_TypeError,
-                             "calling %R should have returned an instance of "
-                             "BaseException, not %R",
-                             type, Py_TYPE(value));
-                goto bad;
-            }
-        }
-    } else {
-        PyErr_SetString(PyExc_TypeError,
-            "raise: exception class must be a subclass of BaseException");
-        goto bad;
     }
-    if (cause) {
-        PyObject *fixed_cause;
-        if (cause == Py_None) {
-            fixed_cause = NULL;
-        } else if (PyExceptionClass_Check(cause)) {
-            fixed_cause = PyObject_CallObject(cause, NULL);
-            if (fixed_cause == NULL)
-                goto bad;
-        } else if (PyExceptionInstance_Check(cause)) {
-            fixed_cause = cause;
-            Py_INCREF(fixed_cause);
-        } else {
-            PyErr_SetString(PyExc_TypeError,
-                            "exception causes must derive from "
-                            "BaseException");
-            goto bad;
-        }
-        PyException_SetCause(value, fixed_cause);
-    }
-    PyErr_SetObject(type, value);
-    if (tb) {
-#if CYTHON_COMPILING_IN_PYPY
-        PyObject *tmp_type, *tmp_value, *tmp_tb;
-        PyErr_Fetch(&tmp_type, &tmp_value, &tmp_tb);
-        Py_INCREF(tb);
-        PyErr_Restore(tmp_type, tmp_value, tb);
-        Py_XDECREF(tmp_tb);
 #else
-        PyThreadState *tstate = __Pyx_PyThreadState_Current;
-        PyObject* tmp_tb = tstate->curexc_traceback;
-        if (tb != tmp_tb) {
-            Py_INCREF(tb);
-            tstate->curexc_traceback = tb;
-            Py_XDECREF(tmp_tb);
-        }
-#endif
+    if (is_list || PySequence_Check(o)) {
+        return PySequence_GetItem(o, i);
     }
-bad:
-    Py_XDECREF(owned_instance);
-    return;
-}
 #endif
+    return __Pyx_GetItemInt_Generic(o, PyInt_FromSsize_t(i));
+}
 
 /* PyCFunctionFastCall */
 #if CYTHON_FAST_PYCCALL
@@ -4567,6 +4932,231 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_CallNoArg(PyObject *func) {
 }
 #endif
 
+/* PyErrFetchRestore */
+  #if CYTHON_FAST_THREAD_STATE
+static CYTHON_INLINE void __Pyx_ErrRestoreInState(PyThreadState *tstate, PyObject *type, PyObject *value, PyObject *tb) {
+    PyObject *tmp_type, *tmp_value, *tmp_tb;
+    tmp_type = tstate->curexc_type;
+    tmp_value = tstate->curexc_value;
+    tmp_tb = tstate->curexc_traceback;
+    tstate->curexc_type = type;
+    tstate->curexc_value = value;
+    tstate->curexc_traceback = tb;
+    Py_XDECREF(tmp_type);
+    Py_XDECREF(tmp_value);
+    Py_XDECREF(tmp_tb);
+}
+static CYTHON_INLINE void __Pyx_ErrFetchInState(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb) {
+    *type = tstate->curexc_type;
+    *value = tstate->curexc_value;
+    *tb = tstate->curexc_traceback;
+    tstate->curexc_type = 0;
+    tstate->curexc_value = 0;
+    tstate->curexc_traceback = 0;
+}
+#endif
+
+/* RaiseException */
+  #if PY_MAJOR_VERSION < 3
+static void __Pyx_Raise(PyObject *type, PyObject *value, PyObject *tb,
+                        CYTHON_UNUSED PyObject *cause) {
+    __Pyx_PyThreadState_declare
+    Py_XINCREF(type);
+    if (!value || value == Py_None)
+        value = NULL;
+    else
+        Py_INCREF(value);
+    if (!tb || tb == Py_None)
+        tb = NULL;
+    else {
+        Py_INCREF(tb);
+        if (!PyTraceBack_Check(tb)) {
+            PyErr_SetString(PyExc_TypeError,
+                "raise: arg 3 must be a traceback or None");
+            goto raise_error;
+        }
+    }
+    if (PyType_Check(type)) {
+#if CYTHON_COMPILING_IN_PYPY
+        if (!value) {
+            Py_INCREF(Py_None);
+            value = Py_None;
+        }
+#endif
+        PyErr_NormalizeException(&type, &value, &tb);
+    } else {
+        if (value) {
+            PyErr_SetString(PyExc_TypeError,
+                "instance exception may not have a separate value");
+            goto raise_error;
+        }
+        value = type;
+        type = (PyObject*) Py_TYPE(type);
+        Py_INCREF(type);
+        if (!PyType_IsSubtype((PyTypeObject *)type, (PyTypeObject *)PyExc_BaseException)) {
+            PyErr_SetString(PyExc_TypeError,
+                "raise: exception class must be a subclass of BaseException");
+            goto raise_error;
+        }
+    }
+    __Pyx_PyThreadState_assign
+    __Pyx_ErrRestore(type, value, tb);
+    return;
+raise_error:
+    Py_XDECREF(value);
+    Py_XDECREF(type);
+    Py_XDECREF(tb);
+    return;
+}
+#else
+static void __Pyx_Raise(PyObject *type, PyObject *value, PyObject *tb, PyObject *cause) {
+    PyObject* owned_instance = NULL;
+    if (tb == Py_None) {
+        tb = 0;
+    } else if (tb && !PyTraceBack_Check(tb)) {
+        PyErr_SetString(PyExc_TypeError,
+            "raise: arg 3 must be a traceback or None");
+        goto bad;
+    }
+    if (value == Py_None)
+        value = 0;
+    if (PyExceptionInstance_Check(type)) {
+        if (value) {
+            PyErr_SetString(PyExc_TypeError,
+                "instance exception may not have a separate value");
+            goto bad;
+        }
+        value = type;
+        type = (PyObject*) Py_TYPE(value);
+    } else if (PyExceptionClass_Check(type)) {
+        PyObject *instance_class = NULL;
+        if (value && PyExceptionInstance_Check(value)) {
+            instance_class = (PyObject*) Py_TYPE(value);
+            if (instance_class != type) {
+                int is_subclass = PyObject_IsSubclass(instance_class, type);
+                if (!is_subclass) {
+                    instance_class = NULL;
+                } else if (unlikely(is_subclass == -1)) {
+                    goto bad;
+                } else {
+                    type = instance_class;
+                }
+            }
+        }
+        if (!instance_class) {
+            PyObject *args;
+            if (!value)
+                args = PyTuple_New(0);
+            else if (PyTuple_Check(value)) {
+                Py_INCREF(value);
+                args = value;
+            } else
+                args = PyTuple_Pack(1, value);
+            if (!args)
+                goto bad;
+            owned_instance = PyObject_Call(type, args, NULL);
+            Py_DECREF(args);
+            if (!owned_instance)
+                goto bad;
+            value = owned_instance;
+            if (!PyExceptionInstance_Check(value)) {
+                PyErr_Format(PyExc_TypeError,
+                             "calling %R should have returned an instance of "
+                             "BaseException, not %R",
+                             type, Py_TYPE(value));
+                goto bad;
+            }
+        }
+    } else {
+        PyErr_SetString(PyExc_TypeError,
+            "raise: exception class must be a subclass of BaseException");
+        goto bad;
+    }
+    if (cause) {
+        PyObject *fixed_cause;
+        if (cause == Py_None) {
+            fixed_cause = NULL;
+        } else if (PyExceptionClass_Check(cause)) {
+            fixed_cause = PyObject_CallObject(cause, NULL);
+            if (fixed_cause == NULL)
+                goto bad;
+        } else if (PyExceptionInstance_Check(cause)) {
+            fixed_cause = cause;
+            Py_INCREF(fixed_cause);
+        } else {
+            PyErr_SetString(PyExc_TypeError,
+                            "exception causes must derive from "
+                            "BaseException");
+            goto bad;
+        }
+        PyException_SetCause(value, fixed_cause);
+    }
+    PyErr_SetObject(type, value);
+    if (tb) {
+#if CYTHON_COMPILING_IN_PYPY
+        PyObject *tmp_type, *tmp_value, *tmp_tb;
+        PyErr_Fetch(&tmp_type, &tmp_value, &tmp_tb);
+        Py_INCREF(tb);
+        PyErr_Restore(tmp_type, tmp_value, tb);
+        Py_XDECREF(tmp_tb);
+#else
+        PyThreadState *tstate = __Pyx_PyThreadState_Current;
+        PyObject* tmp_tb = tstate->curexc_traceback;
+        if (tb != tmp_tb) {
+            Py_INCREF(tb);
+            tstate->curexc_traceback = tb;
+            Py_XDECREF(tmp_tb);
+        }
+#endif
+    }
+bad:
+    Py_XDECREF(owned_instance);
+    return;
+}
+#endif
+
+/* WriteUnraisableException */
+  static void __Pyx_WriteUnraisable(const char *name, CYTHON_UNUSED int clineno,
+                                  CYTHON_UNUSED int lineno, CYTHON_UNUSED const char *filename,
+                                  int full_traceback, CYTHON_UNUSED int nogil) {
+    PyObject *old_exc, *old_val, *old_tb;
+    PyObject *ctx;
+    __Pyx_PyThreadState_declare
+#ifdef WITH_THREAD
+    PyGILState_STATE state;
+    if (nogil)
+        state = PyGILState_Ensure();
+#ifdef _MSC_VER
+    else state = (PyGILState_STATE)-1;
+#endif
+#endif
+    __Pyx_PyThreadState_assign
+    __Pyx_ErrFetch(&old_exc, &old_val, &old_tb);
+    if (full_traceback) {
+        Py_XINCREF(old_exc);
+        Py_XINCREF(old_val);
+        Py_XINCREF(old_tb);
+        __Pyx_ErrRestore(old_exc, old_val, old_tb);
+        PyErr_PrintEx(1);
+    }
+    #if PY_MAJOR_VERSION < 3
+    ctx = PyString_FromString(name);
+    #else
+    ctx = PyUnicode_FromString(name);
+    #endif
+    __Pyx_ErrRestore(old_exc, old_val, old_tb);
+    if (!ctx) {
+        PyErr_WriteUnraisable(Py_None);
+    } else {
+        PyErr_WriteUnraisable(ctx);
+        Py_DECREF(ctx);
+    }
+#ifdef WITH_THREAD
+    if (nogil)
+        PyGILState_Release(state);
+#endif
+}
+
 /* PyObjectCallMethod1 */
   static PyObject* __Pyx__PyObject_CallMethod1(PyObject* method, PyObject* arg) {
     PyObject *result = NULL;
@@ -4630,135 +5220,6 @@ done:
         Py_DECREF(retval);
     }
     return 0;
-}
-
-/* WriteUnraisableException */
-  static void __Pyx_WriteUnraisable(const char *name, CYTHON_UNUSED int clineno,
-                                  CYTHON_UNUSED int lineno, CYTHON_UNUSED const char *filename,
-                                  int full_traceback, CYTHON_UNUSED int nogil) {
-    PyObject *old_exc, *old_val, *old_tb;
-    PyObject *ctx;
-    __Pyx_PyThreadState_declare
-#ifdef WITH_THREAD
-    PyGILState_STATE state;
-    if (nogil)
-        state = PyGILState_Ensure();
-#ifdef _MSC_VER
-    else state = (PyGILState_STATE)-1;
-#endif
-#endif
-    __Pyx_PyThreadState_assign
-    __Pyx_ErrFetch(&old_exc, &old_val, &old_tb);
-    if (full_traceback) {
-        Py_XINCREF(old_exc);
-        Py_XINCREF(old_val);
-        Py_XINCREF(old_tb);
-        __Pyx_ErrRestore(old_exc, old_val, old_tb);
-        PyErr_PrintEx(1);
-    }
-    #if PY_MAJOR_VERSION < 3
-    ctx = PyString_FromString(name);
-    #else
-    ctx = PyUnicode_FromString(name);
-    #endif
-    __Pyx_ErrRestore(old_exc, old_val, old_tb);
-    if (!ctx) {
-        PyErr_WriteUnraisable(Py_None);
-    } else {
-        PyErr_WriteUnraisable(ctx);
-        Py_DECREF(ctx);
-    }
-#ifdef WITH_THREAD
-    if (nogil)
-        PyGILState_Release(state);
-#endif
-}
-
-/* GetItemInt */
-  static PyObject *__Pyx_GetItemInt_Generic(PyObject *o, PyObject* j) {
-    PyObject *r;
-    if (!j) return NULL;
-    r = PyObject_GetItem(o, j);
-    Py_DECREF(j);
-    return r;
-}
-static CYTHON_INLINE PyObject *__Pyx_GetItemInt_List_Fast(PyObject *o, Py_ssize_t i,
-                                                              CYTHON_NCP_UNUSED int wraparound,
-                                                              CYTHON_NCP_UNUSED int boundscheck) {
-#if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-    Py_ssize_t wrapped_i = i;
-    if (wraparound & unlikely(i < 0)) {
-        wrapped_i += PyList_GET_SIZE(o);
-    }
-    if ((!boundscheck) || likely((0 <= wrapped_i) & (wrapped_i < PyList_GET_SIZE(o)))) {
-        PyObject *r = PyList_GET_ITEM(o, wrapped_i);
-        Py_INCREF(r);
-        return r;
-    }
-    return __Pyx_GetItemInt_Generic(o, PyInt_FromSsize_t(i));
-#else
-    return PySequence_GetItem(o, i);
-#endif
-}
-static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Tuple_Fast(PyObject *o, Py_ssize_t i,
-                                                              CYTHON_NCP_UNUSED int wraparound,
-                                                              CYTHON_NCP_UNUSED int boundscheck) {
-#if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-    Py_ssize_t wrapped_i = i;
-    if (wraparound & unlikely(i < 0)) {
-        wrapped_i += PyTuple_GET_SIZE(o);
-    }
-    if ((!boundscheck) || likely((0 <= wrapped_i) & (wrapped_i < PyTuple_GET_SIZE(o)))) {
-        PyObject *r = PyTuple_GET_ITEM(o, wrapped_i);
-        Py_INCREF(r);
-        return r;
-    }
-    return __Pyx_GetItemInt_Generic(o, PyInt_FromSsize_t(i));
-#else
-    return PySequence_GetItem(o, i);
-#endif
-}
-static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Fast(PyObject *o, Py_ssize_t i, int is_list,
-                                                     CYTHON_NCP_UNUSED int wraparound,
-                                                     CYTHON_NCP_UNUSED int boundscheck) {
-#if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS && CYTHON_USE_TYPE_SLOTS
-    if (is_list || PyList_CheckExact(o)) {
-        Py_ssize_t n = ((!wraparound) | likely(i >= 0)) ? i : i + PyList_GET_SIZE(o);
-        if ((!boundscheck) || (likely((n >= 0) & (n < PyList_GET_SIZE(o))))) {
-            PyObject *r = PyList_GET_ITEM(o, n);
-            Py_INCREF(r);
-            return r;
-        }
-    }
-    else if (PyTuple_CheckExact(o)) {
-        Py_ssize_t n = ((!wraparound) | likely(i >= 0)) ? i : i + PyTuple_GET_SIZE(o);
-        if ((!boundscheck) || likely((n >= 0) & (n < PyTuple_GET_SIZE(o)))) {
-            PyObject *r = PyTuple_GET_ITEM(o, n);
-            Py_INCREF(r);
-            return r;
-        }
-    } else {
-        PySequenceMethods *m = Py_TYPE(o)->tp_as_sequence;
-        if (likely(m && m->sq_item)) {
-            if (wraparound && unlikely(i < 0) && likely(m->sq_length)) {
-                Py_ssize_t l = m->sq_length(o);
-                if (likely(l >= 0)) {
-                    i += l;
-                } else {
-                    if (!PyErr_ExceptionMatches(PyExc_OverflowError))
-                        return NULL;
-                    PyErr_Clear();
-                }
-            }
-            return m->sq_item(o, i);
-        }
-    }
-#else
-    if (is_list || PySequence_Check(o)) {
-        return PySequence_GetItem(o, i);
-    }
-#endif
-    return __Pyx_GetItemInt_Generic(o, PyInt_FromSsize_t(i));
 }
 
 /* GetModuleGlobalName */
@@ -5447,6 +5908,37 @@ bad:
     }
 
 /* CIntToPy */
+      static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value) {
+    const long neg_one = (long) -1, const_zero = (long) 0;
+    const int is_unsigned = neg_one > const_zero;
+    if (is_unsigned) {
+        if (sizeof(long) < sizeof(long)) {
+            return PyInt_FromLong((long) value);
+        } else if (sizeof(long) <= sizeof(unsigned long)) {
+            return PyLong_FromUnsignedLong((unsigned long) value);
+#ifdef HAVE_LONG_LONG
+        } else if (sizeof(long) <= sizeof(unsigned PY_LONG_LONG)) {
+            return PyLong_FromUnsignedLongLong((unsigned PY_LONG_LONG) value);
+#endif
+        }
+    } else {
+        if (sizeof(long) <= sizeof(long)) {
+            return PyInt_FromLong((long) value);
+#ifdef HAVE_LONG_LONG
+        } else if (sizeof(long) <= sizeof(PY_LONG_LONG)) {
+            return PyLong_FromLongLong((PY_LONG_LONG) value);
+#endif
+        }
+    }
+    {
+        int one = 1; int little = (int)*(unsigned char *)&one;
+        unsigned char *bytes = (unsigned char *)&value;
+        return _PyLong_FromByteArray(bytes, sizeof(long),
+                                     little, !is_unsigned);
+    }
+}
+
+/* CIntToPy */
       static CYTHON_INLINE PyObject* __Pyx_PyInt_From_uint8_t(uint8_t value) {
     const uint8_t neg_one = (uint8_t) -1, const_zero = (uint8_t) 0;
     const int is_unsigned = neg_one > const_zero;
@@ -5478,24 +5970,24 @@ bad:
 }
 
 /* CIntToPy */
-      static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value) {
-    const long neg_one = (long) -1, const_zero = (long) 0;
+      static CYTHON_INLINE PyObject* __Pyx_PyInt_From_int(int value) {
+    const int neg_one = (int) -1, const_zero = (int) 0;
     const int is_unsigned = neg_one > const_zero;
     if (is_unsigned) {
-        if (sizeof(long) < sizeof(long)) {
+        if (sizeof(int) < sizeof(long)) {
             return PyInt_FromLong((long) value);
-        } else if (sizeof(long) <= sizeof(unsigned long)) {
+        } else if (sizeof(int) <= sizeof(unsigned long)) {
             return PyLong_FromUnsignedLong((unsigned long) value);
 #ifdef HAVE_LONG_LONG
-        } else if (sizeof(long) <= sizeof(unsigned PY_LONG_LONG)) {
+        } else if (sizeof(int) <= sizeof(unsigned PY_LONG_LONG)) {
             return PyLong_FromUnsignedLongLong((unsigned PY_LONG_LONG) value);
 #endif
         }
     } else {
-        if (sizeof(long) <= sizeof(long)) {
+        if (sizeof(int) <= sizeof(long)) {
             return PyInt_FromLong((long) value);
 #ifdef HAVE_LONG_LONG
-        } else if (sizeof(long) <= sizeof(PY_LONG_LONG)) {
+        } else if (sizeof(int) <= sizeof(PY_LONG_LONG)) {
             return PyLong_FromLongLong((PY_LONG_LONG) value);
 #endif
         }
@@ -5503,9 +5995,198 @@ bad:
     {
         int one = 1; int little = (int)*(unsigned char *)&one;
         unsigned char *bytes = (unsigned char *)&value;
-        return _PyLong_FromByteArray(bytes, sizeof(long),
+        return _PyLong_FromByteArray(bytes, sizeof(int),
                                      little, !is_unsigned);
     }
+}
+
+/* CIntFromPy */
+      static CYTHON_INLINE int __Pyx_PyInt_As_int(PyObject *x) {
+    const int neg_one = (int) -1, const_zero = (int) 0;
+    const int is_unsigned = neg_one > const_zero;
+#if PY_MAJOR_VERSION < 3
+    if (likely(PyInt_Check(x))) {
+        if (sizeof(int) < sizeof(long)) {
+            __PYX_VERIFY_RETURN_INT(int, long, PyInt_AS_LONG(x))
+        } else {
+            long val = PyInt_AS_LONG(x);
+            if (is_unsigned && unlikely(val < 0)) {
+                goto raise_neg_overflow;
+            }
+            return (int) val;
+        }
+    } else
+#endif
+    if (likely(PyLong_Check(x))) {
+        if (is_unsigned) {
+#if CYTHON_USE_PYLONG_INTERNALS
+            const digit* digits = ((PyLongObject*)x)->ob_digit;
+            switch (Py_SIZE(x)) {
+                case  0: return (int) 0;
+                case  1: __PYX_VERIFY_RETURN_INT(int, digit, digits[0])
+                case 2:
+                    if (8 * sizeof(int) > 1 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 2 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(int, unsigned long, (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(int) >= 2 * PyLong_SHIFT) {
+                            return (int) (((((int)digits[1]) << PyLong_SHIFT) | (int)digits[0]));
+                        }
+                    }
+                    break;
+                case 3:
+                    if (8 * sizeof(int) > 2 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 3 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(int, unsigned long, (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(int) >= 3 * PyLong_SHIFT) {
+                            return (int) (((((((int)digits[2]) << PyLong_SHIFT) | (int)digits[1]) << PyLong_SHIFT) | (int)digits[0]));
+                        }
+                    }
+                    break;
+                case 4:
+                    if (8 * sizeof(int) > 3 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 4 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(int, unsigned long, (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(int) >= 4 * PyLong_SHIFT) {
+                            return (int) (((((((((int)digits[3]) << PyLong_SHIFT) | (int)digits[2]) << PyLong_SHIFT) | (int)digits[1]) << PyLong_SHIFT) | (int)digits[0]));
+                        }
+                    }
+                    break;
+            }
+#endif
+#if CYTHON_COMPILING_IN_CPYTHON
+            if (unlikely(Py_SIZE(x) < 0)) {
+                goto raise_neg_overflow;
+            }
+#else
+            {
+                int result = PyObject_RichCompareBool(x, Py_False, Py_LT);
+                if (unlikely(result < 0))
+                    return (int) -1;
+                if (unlikely(result == 1))
+                    goto raise_neg_overflow;
+            }
+#endif
+            if (sizeof(int) <= sizeof(unsigned long)) {
+                __PYX_VERIFY_RETURN_INT_EXC(int, unsigned long, PyLong_AsUnsignedLong(x))
+#ifdef HAVE_LONG_LONG
+            } else if (sizeof(int) <= sizeof(unsigned PY_LONG_LONG)) {
+                __PYX_VERIFY_RETURN_INT_EXC(int, unsigned PY_LONG_LONG, PyLong_AsUnsignedLongLong(x))
+#endif
+            }
+        } else {
+#if CYTHON_USE_PYLONG_INTERNALS
+            const digit* digits = ((PyLongObject*)x)->ob_digit;
+            switch (Py_SIZE(x)) {
+                case  0: return (int) 0;
+                case -1: __PYX_VERIFY_RETURN_INT(int, sdigit, (sdigit) (-(sdigit)digits[0]))
+                case  1: __PYX_VERIFY_RETURN_INT(int,  digit, +digits[0])
+                case -2:
+                    if (8 * sizeof(int) - 1 > 1 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 2 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(int, long, -(long) (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(int) - 1 > 2 * PyLong_SHIFT) {
+                            return (int) (((int)-1)*(((((int)digits[1]) << PyLong_SHIFT) | (int)digits[0])));
+                        }
+                    }
+                    break;
+                case 2:
+                    if (8 * sizeof(int) > 1 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 2 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(int, unsigned long, (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(int) - 1 > 2 * PyLong_SHIFT) {
+                            return (int) ((((((int)digits[1]) << PyLong_SHIFT) | (int)digits[0])));
+                        }
+                    }
+                    break;
+                case -3:
+                    if (8 * sizeof(int) - 1 > 2 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 3 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(int, long, -(long) (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(int) - 1 > 3 * PyLong_SHIFT) {
+                            return (int) (((int)-1)*(((((((int)digits[2]) << PyLong_SHIFT) | (int)digits[1]) << PyLong_SHIFT) | (int)digits[0])));
+                        }
+                    }
+                    break;
+                case 3:
+                    if (8 * sizeof(int) > 2 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 3 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(int, unsigned long, (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(int) - 1 > 3 * PyLong_SHIFT) {
+                            return (int) ((((((((int)digits[2]) << PyLong_SHIFT) | (int)digits[1]) << PyLong_SHIFT) | (int)digits[0])));
+                        }
+                    }
+                    break;
+                case -4:
+                    if (8 * sizeof(int) - 1 > 3 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 4 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(int, long, -(long) (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(int) - 1 > 4 * PyLong_SHIFT) {
+                            return (int) (((int)-1)*(((((((((int)digits[3]) << PyLong_SHIFT) | (int)digits[2]) << PyLong_SHIFT) | (int)digits[1]) << PyLong_SHIFT) | (int)digits[0])));
+                        }
+                    }
+                    break;
+                case 4:
+                    if (8 * sizeof(int) > 3 * PyLong_SHIFT) {
+                        if (8 * sizeof(unsigned long) > 4 * PyLong_SHIFT) {
+                            __PYX_VERIFY_RETURN_INT(int, unsigned long, (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(int) - 1 > 4 * PyLong_SHIFT) {
+                            return (int) ((((((((((int)digits[3]) << PyLong_SHIFT) | (int)digits[2]) << PyLong_SHIFT) | (int)digits[1]) << PyLong_SHIFT) | (int)digits[0])));
+                        }
+                    }
+                    break;
+            }
+#endif
+            if (sizeof(int) <= sizeof(long)) {
+                __PYX_VERIFY_RETURN_INT_EXC(int, long, PyLong_AsLong(x))
+#ifdef HAVE_LONG_LONG
+            } else if (sizeof(int) <= sizeof(PY_LONG_LONG)) {
+                __PYX_VERIFY_RETURN_INT_EXC(int, PY_LONG_LONG, PyLong_AsLongLong(x))
+#endif
+            }
+        }
+        {
+#if CYTHON_COMPILING_IN_PYPY && !defined(_PyLong_AsByteArray)
+            PyErr_SetString(PyExc_RuntimeError,
+                            "_PyLong_AsByteArray() not available in PyPy, cannot convert large numbers");
+#else
+            int val;
+            PyObject *v = __Pyx_PyNumber_IntOrLong(x);
+ #if PY_MAJOR_VERSION < 3
+            if (likely(v) && !PyLong_Check(v)) {
+                PyObject *tmp = v;
+                v = PyNumber_Long(tmp);
+                Py_DECREF(tmp);
+            }
+ #endif
+            if (likely(v)) {
+                int one = 1; int is_little = (int)*(unsigned char *)&one;
+                unsigned char *bytes = (unsigned char *)&val;
+                int ret = _PyLong_AsByteArray((PyLongObject *)v,
+                                              bytes, sizeof(val),
+                                              is_little, !is_unsigned);
+                Py_DECREF(v);
+                if (likely(!ret))
+                    return val;
+            }
+#endif
+            return (int) -1;
+        }
+    } else {
+        int val;
+        PyObject *tmp = __Pyx_PyNumber_IntOrLong(x);
+        if (!tmp) return (int) -1;
+        val = __Pyx_PyInt_As_int(tmp);
+        Py_DECREF(tmp);
+        return val;
+    }
+raise_overflow:
+    PyErr_SetString(PyExc_OverflowError,
+        "value too large to convert to int");
+    return (int) -1;
+raise_neg_overflow:
+    PyErr_SetString(PyExc_OverflowError,
+        "can't convert negative value to int");
+    return (int) -1;
 }
 
 /* CIntFromPy */
@@ -5884,195 +6565,6 @@ raise_neg_overflow:
     PyErr_SetString(PyExc_OverflowError,
         "can't convert negative value to long");
     return (long) -1;
-}
-
-/* CIntFromPy */
-      static CYTHON_INLINE int __Pyx_PyInt_As_int(PyObject *x) {
-    const int neg_one = (int) -1, const_zero = (int) 0;
-    const int is_unsigned = neg_one > const_zero;
-#if PY_MAJOR_VERSION < 3
-    if (likely(PyInt_Check(x))) {
-        if (sizeof(int) < sizeof(long)) {
-            __PYX_VERIFY_RETURN_INT(int, long, PyInt_AS_LONG(x))
-        } else {
-            long val = PyInt_AS_LONG(x);
-            if (is_unsigned && unlikely(val < 0)) {
-                goto raise_neg_overflow;
-            }
-            return (int) val;
-        }
-    } else
-#endif
-    if (likely(PyLong_Check(x))) {
-        if (is_unsigned) {
-#if CYTHON_USE_PYLONG_INTERNALS
-            const digit* digits = ((PyLongObject*)x)->ob_digit;
-            switch (Py_SIZE(x)) {
-                case  0: return (int) 0;
-                case  1: __PYX_VERIFY_RETURN_INT(int, digit, digits[0])
-                case 2:
-                    if (8 * sizeof(int) > 1 * PyLong_SHIFT) {
-                        if (8 * sizeof(unsigned long) > 2 * PyLong_SHIFT) {
-                            __PYX_VERIFY_RETURN_INT(int, unsigned long, (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
-                        } else if (8 * sizeof(int) >= 2 * PyLong_SHIFT) {
-                            return (int) (((((int)digits[1]) << PyLong_SHIFT) | (int)digits[0]));
-                        }
-                    }
-                    break;
-                case 3:
-                    if (8 * sizeof(int) > 2 * PyLong_SHIFT) {
-                        if (8 * sizeof(unsigned long) > 3 * PyLong_SHIFT) {
-                            __PYX_VERIFY_RETURN_INT(int, unsigned long, (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
-                        } else if (8 * sizeof(int) >= 3 * PyLong_SHIFT) {
-                            return (int) (((((((int)digits[2]) << PyLong_SHIFT) | (int)digits[1]) << PyLong_SHIFT) | (int)digits[0]));
-                        }
-                    }
-                    break;
-                case 4:
-                    if (8 * sizeof(int) > 3 * PyLong_SHIFT) {
-                        if (8 * sizeof(unsigned long) > 4 * PyLong_SHIFT) {
-                            __PYX_VERIFY_RETURN_INT(int, unsigned long, (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
-                        } else if (8 * sizeof(int) >= 4 * PyLong_SHIFT) {
-                            return (int) (((((((((int)digits[3]) << PyLong_SHIFT) | (int)digits[2]) << PyLong_SHIFT) | (int)digits[1]) << PyLong_SHIFT) | (int)digits[0]));
-                        }
-                    }
-                    break;
-            }
-#endif
-#if CYTHON_COMPILING_IN_CPYTHON
-            if (unlikely(Py_SIZE(x) < 0)) {
-                goto raise_neg_overflow;
-            }
-#else
-            {
-                int result = PyObject_RichCompareBool(x, Py_False, Py_LT);
-                if (unlikely(result < 0))
-                    return (int) -1;
-                if (unlikely(result == 1))
-                    goto raise_neg_overflow;
-            }
-#endif
-            if (sizeof(int) <= sizeof(unsigned long)) {
-                __PYX_VERIFY_RETURN_INT_EXC(int, unsigned long, PyLong_AsUnsignedLong(x))
-#ifdef HAVE_LONG_LONG
-            } else if (sizeof(int) <= sizeof(unsigned PY_LONG_LONG)) {
-                __PYX_VERIFY_RETURN_INT_EXC(int, unsigned PY_LONG_LONG, PyLong_AsUnsignedLongLong(x))
-#endif
-            }
-        } else {
-#if CYTHON_USE_PYLONG_INTERNALS
-            const digit* digits = ((PyLongObject*)x)->ob_digit;
-            switch (Py_SIZE(x)) {
-                case  0: return (int) 0;
-                case -1: __PYX_VERIFY_RETURN_INT(int, sdigit, (sdigit) (-(sdigit)digits[0]))
-                case  1: __PYX_VERIFY_RETURN_INT(int,  digit, +digits[0])
-                case -2:
-                    if (8 * sizeof(int) - 1 > 1 * PyLong_SHIFT) {
-                        if (8 * sizeof(unsigned long) > 2 * PyLong_SHIFT) {
-                            __PYX_VERIFY_RETURN_INT(int, long, -(long) (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
-                        } else if (8 * sizeof(int) - 1 > 2 * PyLong_SHIFT) {
-                            return (int) (((int)-1)*(((((int)digits[1]) << PyLong_SHIFT) | (int)digits[0])));
-                        }
-                    }
-                    break;
-                case 2:
-                    if (8 * sizeof(int) > 1 * PyLong_SHIFT) {
-                        if (8 * sizeof(unsigned long) > 2 * PyLong_SHIFT) {
-                            __PYX_VERIFY_RETURN_INT(int, unsigned long, (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
-                        } else if (8 * sizeof(int) - 1 > 2 * PyLong_SHIFT) {
-                            return (int) ((((((int)digits[1]) << PyLong_SHIFT) | (int)digits[0])));
-                        }
-                    }
-                    break;
-                case -3:
-                    if (8 * sizeof(int) - 1 > 2 * PyLong_SHIFT) {
-                        if (8 * sizeof(unsigned long) > 3 * PyLong_SHIFT) {
-                            __PYX_VERIFY_RETURN_INT(int, long, -(long) (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
-                        } else if (8 * sizeof(int) - 1 > 3 * PyLong_SHIFT) {
-                            return (int) (((int)-1)*(((((((int)digits[2]) << PyLong_SHIFT) | (int)digits[1]) << PyLong_SHIFT) | (int)digits[0])));
-                        }
-                    }
-                    break;
-                case 3:
-                    if (8 * sizeof(int) > 2 * PyLong_SHIFT) {
-                        if (8 * sizeof(unsigned long) > 3 * PyLong_SHIFT) {
-                            __PYX_VERIFY_RETURN_INT(int, unsigned long, (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
-                        } else if (8 * sizeof(int) - 1 > 3 * PyLong_SHIFT) {
-                            return (int) ((((((((int)digits[2]) << PyLong_SHIFT) | (int)digits[1]) << PyLong_SHIFT) | (int)digits[0])));
-                        }
-                    }
-                    break;
-                case -4:
-                    if (8 * sizeof(int) - 1 > 3 * PyLong_SHIFT) {
-                        if (8 * sizeof(unsigned long) > 4 * PyLong_SHIFT) {
-                            __PYX_VERIFY_RETURN_INT(int, long, -(long) (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
-                        } else if (8 * sizeof(int) - 1 > 4 * PyLong_SHIFT) {
-                            return (int) (((int)-1)*(((((((((int)digits[3]) << PyLong_SHIFT) | (int)digits[2]) << PyLong_SHIFT) | (int)digits[1]) << PyLong_SHIFT) | (int)digits[0])));
-                        }
-                    }
-                    break;
-                case 4:
-                    if (8 * sizeof(int) > 3 * PyLong_SHIFT) {
-                        if (8 * sizeof(unsigned long) > 4 * PyLong_SHIFT) {
-                            __PYX_VERIFY_RETURN_INT(int, unsigned long, (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
-                        } else if (8 * sizeof(int) - 1 > 4 * PyLong_SHIFT) {
-                            return (int) ((((((((((int)digits[3]) << PyLong_SHIFT) | (int)digits[2]) << PyLong_SHIFT) | (int)digits[1]) << PyLong_SHIFT) | (int)digits[0])));
-                        }
-                    }
-                    break;
-            }
-#endif
-            if (sizeof(int) <= sizeof(long)) {
-                __PYX_VERIFY_RETURN_INT_EXC(int, long, PyLong_AsLong(x))
-#ifdef HAVE_LONG_LONG
-            } else if (sizeof(int) <= sizeof(PY_LONG_LONG)) {
-                __PYX_VERIFY_RETURN_INT_EXC(int, PY_LONG_LONG, PyLong_AsLongLong(x))
-#endif
-            }
-        }
-        {
-#if CYTHON_COMPILING_IN_PYPY && !defined(_PyLong_AsByteArray)
-            PyErr_SetString(PyExc_RuntimeError,
-                            "_PyLong_AsByteArray() not available in PyPy, cannot convert large numbers");
-#else
-            int val;
-            PyObject *v = __Pyx_PyNumber_IntOrLong(x);
- #if PY_MAJOR_VERSION < 3
-            if (likely(v) && !PyLong_Check(v)) {
-                PyObject *tmp = v;
-                v = PyNumber_Long(tmp);
-                Py_DECREF(tmp);
-            }
- #endif
-            if (likely(v)) {
-                int one = 1; int is_little = (int)*(unsigned char *)&one;
-                unsigned char *bytes = (unsigned char *)&val;
-                int ret = _PyLong_AsByteArray((PyLongObject *)v,
-                                              bytes, sizeof(val),
-                                              is_little, !is_unsigned);
-                Py_DECREF(v);
-                if (likely(!ret))
-                    return val;
-            }
-#endif
-            return (int) -1;
-        }
-    } else {
-        int val;
-        PyObject *tmp = __Pyx_PyNumber_IntOrLong(x);
-        if (!tmp) return (int) -1;
-        val = __Pyx_PyInt_As_int(tmp);
-        Py_DECREF(tmp);
-        return val;
-    }
-raise_overflow:
-    PyErr_SetString(PyExc_OverflowError,
-        "value too large to convert to int");
-    return (int) -1;
-raise_neg_overflow:
-    PyErr_SetString(PyExc_OverflowError,
-        "can't convert negative value to int");
-    return (int) -1;
 }
 
 /* FastTypeChecks */

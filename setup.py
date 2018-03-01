@@ -10,7 +10,7 @@ extensions = [
 ]
 setup(
     name='nfci2c',
-    version='1.0',
+    version='1.1',
     author='Mac Baker',
     author_email='bakerjm24450.dev@gmail.com',
     description='Python wrapper for libnfc I2C interface',
