@@ -83,7 +83,7 @@ cdef class Nfci2c:
 
         # get the I2C mux parameters
         self.__muxAddr = muxAddr
-        self.__muxChannel = muxChannel & 0x7
+        self.__muxChannel = muxChannel
 
         # set the I2C mux if using
         self._selectChannel()
@@ -193,5 +193,5 @@ cdef class Nfci2c:
     def _selectChannel(self):
         if self.__muxChannel != -1:
             bus = smbus.SMBus(self.__busAddr)
-            bus.write_byte(self.__muxAddr, 1 << self.__muxChannel)
+            bus.write_byte(self.__muxAddr, 1 << (self.__muxChannel & 0x7))
             bus.close()
