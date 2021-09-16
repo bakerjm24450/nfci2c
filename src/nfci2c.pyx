@@ -131,13 +131,13 @@ cdef class Nfci2c:
             We only search for ISO14443A-type tags
 
         Returns:
-            Returns array.array of unsigned chars containing UID of tag
+            Returns UID of tag as a list of four numbers
             If no tag is found, returns None
         """
         cdef cnfci2c.nfc_modulation nm
         nm.nmt = cnfci2c.NMT_ISO14443A 
         nm.nbr = cnfci2c.NBR_106
-        cdef array.array tag = array.array('B')
+        cdef list tag = []
 
         # set the I2C mux if using
         self._selectChannel()
