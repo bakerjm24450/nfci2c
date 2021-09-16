@@ -28,6 +28,10 @@ Example:
 
 Notes:
     This was built using Cython
+    
+Versions:
+    1.1 -- initial version
+    1.2 -- modified to return tag UID as a python list
 
 Author:
     Mac Baker (bakerjm24450.dev@gmail.com)
